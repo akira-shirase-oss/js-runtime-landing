@@ -1,0 +1,23 @@
+# Security headers for every response from Cloudflare Pages
+# (syntax: https://developers.cloudflare.com/pages/configuration/headers/).
+# `npm run build && npm run check` fails if a header is missing or the policy no longer fits the pages.
+#
+# Content-Security-Policy, one directive at a time:
+#   default-src 'none'   nothing loads unless a directive below allows it
+#   script-src           same-origin files plus the SHA-256 of each inline <script> Astro emits. When a
+#                        component script changes, the check prints the new hash: review the script, then
+#                        swap the hash here. JSON-LD blocks are data, not scripts, so they need none.
+#   style-src            'unsafe-inline' because Astro inlines small stylesheets and components set
+#                        style attributes. Adding a hash here would switch 'unsafe-inline' off.
+#   img-src, font-src    the site's own files only: images and fonts are self-hosted
+#   base-uri, form-action, frame-ancestors   'none': no <base>, no forms, never framed
+# Cloudflare Web Analytics auto-injection, Rocket Loader and Zaraz add scripts this policy blocks.
+# Leave them off, or change the policy first.
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-wsmnxD6kqdZZ/V2wQ85d92sMux2lvh7NN1y5/Y5SS5c=' 'sha256-ZVOlaHTzKWn0aw/7SlZpzUC33YyUIXuq0yXJ4oNhCNE=' 'sha256-jcGxqr5df3Yhy0nzg+sEMXDaoMkTSBu+zNSbj1FavsI=' 'sha256-jrYezD1/P9Heb7qpKs5Weywe2INyZ5MGDPbI9m8v1fo=' 'sha256-RHue8hNC+iXtSc7f1PvTU83Oa7ym3U892m8zxMfPesA=' 'sha256-JYHlBxWpqSMZ7GCm86gam85wwbHNceTXU35m8NBfQjQ='; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
