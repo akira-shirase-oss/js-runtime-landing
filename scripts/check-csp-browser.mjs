@@ -269,9 +269,9 @@ await visit('/', desktop, async (page, report) => {
   await page.evaluate(() => document.querySelector('footer').scrollIntoView({ block: 'end' }))
   await page.waitForTimeout(1500)
   const after = await page.evaluate(() => { const w = document.querySelector('[data-wordmark]'); return { print: w.dataset.print, clip: getComputedStyle(w).clipPath } })
-  if (after.print !== 'go' || !(after.clip === 'none' || after.clip === 'inset(0px)')) {
-    report(`the wordmark never finished printing: ${JSON.stringify(after)}`)
-  }
+  // Finished means back to the plain default: 'none', or an inset whose parsed values are all zero.
+  const unclipped = (clip) => clip === 'none' || (clip.startsWith('inset(') && clip.slice(6, -1).trim().split(/\s+/).every((v) => parseFloat(v) === 0))
+  if (after.print !== 'go' || !unclipped(after.clip)) report(`the wordmark never finished printing: ${JSON.stringify(after)}`)
   for (const sel of ['[data-why]', '[data-proof]']) {
     const reveal = await page.evaluate((sel) => document.querySelector(sel)?.dataset.reveal, sel)
     if (reveal !== 'shown') report(`${sel} did not reveal in view (data-reveal=${reveal})`)

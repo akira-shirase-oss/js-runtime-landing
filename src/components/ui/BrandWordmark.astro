@@ -30,13 +30,15 @@ const { class: className } = Astro.props
   }
   /* Printing: the rows appear from the top, in steps, once. 'armed' is set by the footer's script
      only, and only when the word is still below the fold — the html.js gate keeps it harmless if a
-     build ever carried the attribute without its script. */
+     build ever carried the attribute without its script. The print fills 'backwards' (holding the
+     hidden first frame through any delay), so when it ends nothing is left applied: the finished
+     clip-path computes to none, like the title's. */
   @media (prefers-reduced-motion: no-preference) {
     :global(html.js) :global([data-wordmark][data-print='armed']) {
       clip-path: inset(0 0 100% 0);
     }
     :global(html.js) :global([data-wordmark][data-print='go']) {
-      animation: print var(--print-line) steps(var(--rows), end) both;
+      animation: print var(--print-line) steps(var(--rows), end) backwards;
     }
   }
 </style>
