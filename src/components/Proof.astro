@@ -3,38 +3,38 @@ import SectionHeading from './ui/SectionHeading.astro'
 import styles from './Proof.module.css'
 import { REPO, DOCS_URL, CHANGELOG_URL } from '../data/site'
 
-// Every number here exists in the product repository's committed evidence (perf/results/, LOAD_MATRIX.md):
-// the load driver, machine, commit and date are recorded per run. These are development observations on one
-// workstation, never production-capacity claims — the footnote says so, as the workspace's evidence rule asks.
-const evidence = `${REPO}/blob/main/perf/LOAD_MATRIX.md`
+// Every number here is the release's own committed evidence: v1.0.0's full-scale CI load run (workflow
+// load.yml, ubuntu-24.04, a 4-core Xeon 8573C runner) at commit 8dc8d32, 2026-11-19. Each card links the
+// artifact that recorded it under perf/results/; the load matrix describes the whole set.
+const artifact = (f: string) => `${REPO}/blob/main/perf/results/${f}`
 const stats = [
   {
     n: '1,000,000',
+    unit: 'of 1,000,000 refusals classified',
+    text: 'every ungated op call in one ungranted run refused, and every refusal a named CapabilityError — nothing slipped through unclassified, in 6.7 s.',
+    how: 'the refusal-flood scenario',
+    cite: { text: 'the recorded run', href: artifact('m8-3-refusal-flood-2026-11-19T00-45-56Z-8dc8d32.json') },
+  },
+  {
+    n: '1,000,000',
     unit: 'requests served',
-    text: 'every one answered ok through rt.serve, at 86,620 rps with p50 latency of 367 µs on 32 keep-alive connections.',
-    how: 'the jsrt-load driver against a release build, 2026-11-17',
-    cite: { text: 'the load matrix', href: evidence },
+    text: 'every GET answered ok through rt.serve at 75,148 rps (p50 424 µs, 32 keep-alive connections); at 128 the listener saturated flat at 76,619 rps — latency queued, nothing collapsed, zero errors.',
+    how: 'the serve and saturation scenarios',
+    cite: { text: 'the recorded run', href: artifact('m7-2b-serve-1m-2026-11-19T00-33-45Z-8dc8d32.json') },
   },
   {
-    n: '2,000',
-    unit: 'refusals classified',
-    text: '2,000 of 2,000 capability refusals ended as a named CapabilityError and exit 7, in 17.7 s — none misclassified.',
-    how: 'the sustained-refusal scenario, 2026-11-07',
-    cite: { text: 'the load matrix', href: evidence },
+    n: '1,000',
+    unit: 'supervised respawns',
+    text: 'spawn→ready→SIGTERM cycles of a serve worker, each classified exit 6 (operator-sigterm) with zero orphans — and the forwarded-output report stayed bounded by rotating a generation.',
+    how: 'the supervise-churn scenario',
+    cite: { text: 'the recorded run', href: artifact('m8-4-supervise-churn-2026-11-19T00-47-21Z-8dc8d32.json') },
   },
   {
-    n: '27.8 ns',
+    n: '51.5 ns',
     unit: 'an op call',
-    text: 'one million rt.now() calls in 44.1 ms of wall time; the Rust-to-V8 boundary costs about 22 ns of that.',
-    how: 'the op-boundary scenario, same build and commit',
-    cite: { text: 'the load matrix', href: evidence },
-  },
-  {
-    n: '9.3 ms',
-    unit: 'cold start, p50',
-    text: 'spawn to done across 1,000 cold starts (p95 10.5 ms, no failures) — V8 included, on one thread.',
-    how: 'the cold-start scenario, same build and commit',
-    cite: { text: 'the load matrix', href: evidence },
+    text: 'a million rt.now() calls in 74.4 ms of wall time; about 47 ns of it is the Rust-to-V8 boundary after the loop baseline.',
+    how: 'the op-boundary scenario',
+    cite: { text: 'the recorded run', href: artifact('m7-2a-op-1m-2026-11-19T00-33-32Z-8dc8d32.json') },
   },
 ]
 const contract = [
@@ -55,8 +55,10 @@ const contract = [
       Measured, <span class="soft">not claimed</span>
     </SectionHeading>
     <p class={`t-body ${styles.lede}`}>
-      v1.0.0 shipped 2026-11-19 (<a class="inline-link" href={CHANGELOG_URL}>the changelog</a>). Its evidence is
-      committed next to the code: each run below names its scenario, machine and commit.
+      v1.0.0 shipped 2026-11-19 (<a class="inline-link" href={CHANGELOG_URL}>the changelog</a>). Its load
+      evidence is committed next to the code: the numbers below all come from the release's own CI run —
+      <a class="inline-link" href={`${REPO}/blob/main/perf/LOAD_MATRIX.md`}>the load matrix</a> — on a
+      4-core Xeon 8573C Linux runner at commit 8dc8d32.
     </p>
 
     <ul class={styles.grid} data-proof>
@@ -91,8 +93,8 @@ const contract = [
     </div>
 
     <p class={styles.note}>
-      Development observations on one Apple M2 Pro workstation, not production-capacity claims. Load runs keep
-      their misses instead of re-running to a nicer number.
+      One reproducible CI environment, not production capacity — the load matrix's own honesty rule. Failed
+      runs are kept in the same directory, not re-run to a nicer number.
     </p>
   </div>
 </section>
