@@ -6,8 +6,10 @@
 }
 .window {
   width: 100%;
-  max-width: 380px;
   overflow: hidden;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
 }
 .bar {
   display: flex;
@@ -61,6 +63,7 @@
   outline-offset: 2px;
 }
 .code {
+  flex: 1 1 auto;
   margin: 0;
   padding: 16px 16px 72px;
   font-size: 12px;
@@ -86,6 +89,7 @@
 }
 /* The events: three stacked notifications over the window's foot, the reference's chips over the photo. */
 .events {
+  flex: 0 0 auto;
   width: auto;
   margin: -52px 12px 0;
   display: flex;

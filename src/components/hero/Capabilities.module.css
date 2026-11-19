@@ -95,6 +95,7 @@ button.row:active {
   opacity: 0.75;
 }
 .result {
+  margin-top: auto;
   /* two lines reserved, so the summary changing on its own never moves the card */
   height: calc(2 * 1.4em);
   font-family: var(--font-text);

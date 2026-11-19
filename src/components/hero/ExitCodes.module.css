@@ -91,6 +91,7 @@
   font-weight: 600;
 }
 .read {
+  margin-top: auto;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 4px 10px;
