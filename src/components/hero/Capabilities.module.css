@@ -1,0 +1,120 @@
+.box {
+  width: 100%;
+  max-width: 360px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-text);
+  font-size: 13px;
+  color: var(--c-text);
+}
+.head :global(.mono) {
+  font-size: 13px;
+  color: var(--c-ink);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  padding: 0 12px 0 14px;
+  border-radius: var(--radius-lg);
+  background: var(--c-surface);
+  font-family: var(--font-text);
+  font-size: 15px;
+  color: var(--c-ink);
+  text-align: left;
+  transition:
+    background-color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease);
+}
+.row svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--c-text);
+}
+.label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* the state chip: amber when granted, the refusal tone otherwise */
+.chip {
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-code);
+  font-size: 12px;
+  background: var(--c-danger-tint);
+  color: var(--c-danger);
+  transition:
+    background-color 0.15s var(--ease),
+    color 0.15s var(--ease);
+}
+.row[aria-pressed='true'] .chip {
+  background: var(--c-accent-bg);
+  color: var(--c-accent);
+}
+.row[aria-pressed='true'] svg {
+  color: var(--c-accent);
+}
+button.row {
+  cursor: pointer;
+}
+@media (hover: hover) {
+  button.row:hover {
+    box-shadow: inset 0 0 0 1px var(--c-card-edge-hover);
+  }
+}
+button.row:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+button.row:active {
+  transform: scale(0.99);
+}
+.fixed {
+  opacity: 0.75;
+}
+.result {
+  min-height: 2.8em;
+  font-family: var(--font-text);
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--c-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .chip {
+    transition: none;
+  }
+}
+@media (max-width: 499px) {
+  .box {
+    padding: 16px;
+  }
+  .row {
+    gap: 10px;
+    padding: 0 10px 0 12px;
+    font-size: 14px;
+  }
+  .chip {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+}

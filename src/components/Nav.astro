@@ -11,11 +11,13 @@ const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.07
 const MOON = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'
 
 const links = [
+  { label: 'Why jsrt', href: '/#why' },
   { label: 'Proof', href: '/#proof' },
-  { label: 'Quick start', href: '/#quick-start' },
+  { label: 'Features', href: '/#features' },
   { label: 'Docs', href: DOCS_URL },
   { label: 'Changelog', href: CHANGELOG_URL },
 ]
+const QUICK_START = `${DOCS_URL}/quick-start/`
 ---
 
 <header class={styles.wrap}>
@@ -24,21 +26,16 @@ const links = [
       <a href="/" class={styles.logo} aria-label="jsrt home">
         <BrandLogo />
       </a>
-      <div class={styles.menu}>
-        <div class={styles.links}>
-          {
-            links.map((l, i) => (
-              <>
-                {i > 0 && <span class={styles.dot} aria-hidden="true" />}
-                <a href={l.href} class={`t-label ${styles.link}`}>
-                  {l.label}
-                </a>
-              </>
-            ))
-          }
-        </div>
-        <ArrowButton href={REPO}>View on GitHub</ArrowButton>
+      <div class={styles.links}>
+        {
+          links.map((l) => (
+            <a href={l.href} class={styles.link}>
+              {l.label}
+            </a>
+          ))
+        }
       </div>
+      <div class={styles.right}>
       <button
         type="button"
         class={styles.toggle}
@@ -50,10 +47,13 @@ const links = [
         <svg class={`${styles.icon} ${styles.sun}`} viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={SUN} />
         <svg class={`${styles.icon} ${styles.moon}`} viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={MOON} />
       </button>
+      <a href={REPO} class={styles.textLink}>GitHub</a>
+      <span class={styles.cta}><ArrowButton href={QUICK_START} arrow={false}>Get started</ArrowButton></span>
       <button type="button" class={styles.burger} aria-label="Open menu" aria-expanded="false" data-nav-toggle>
         <span></span>
         <span></span>
       </button>
+      </div>
     </div>
     <!-- The phone menu exists in the DOM only while open. -->
     <template data-nav-menu>
@@ -65,7 +65,8 @@ const links = [
             </a>
           ))
         }
-        <ArrowButton href={REPO}>View on GitHub</ArrowButton>
+        <a href={REPO} class="t-h5" data-nav-close>GitHub</a>
+        <ArrowButton href={QUICK_START} block>Get started</ArrowButton>
       </div>
     </template>
   </nav>

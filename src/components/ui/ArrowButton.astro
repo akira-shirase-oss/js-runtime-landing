@@ -7,19 +7,21 @@ type Props = {
   variant?: 'primary' | 'secondary' | 'outline'
   /** stretch to the parent's width */
   block?: boolean
+  /** the trailing arrow (on by default) */
+  arrow?: boolean
 }
 
 /**
  * jsrt's button (design/theme.css): a rounded-md rectangle in the theme's colours, the label in Plus Jakarta
  * Sans, and a lucide arrow-right that nudges 2px on hover (once, in CSS; still when motion is reduced).
  */
-const { href, variant = 'primary', block = false } = Astro.props
+const { href, variant = 'primary', block = false, arrow = true } = Astro.props
 const label = await Astro.slots.render('default')
 ---
 
 <a href={href} class={`${styles.button} ${styles[variant]} ${block ? styles.block : ''}`}>
   <span set:html={label} />
-  <svg
+  {arrow && (<svg
     class={styles.arrow}
     viewBox="0 0 24 24"
     fill="none"
@@ -29,5 +31,5 @@ const label = await Astro.slots.render('default')
     stroke-linejoin="round"
     aria-hidden="true"
     focusable="false"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
-  >
+  >)}
 </a>

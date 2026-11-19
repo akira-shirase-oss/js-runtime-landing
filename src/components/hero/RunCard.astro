@@ -1,0 +1,57 @@
+---
+import panel from './panel.module.css'
+import s from './RunCard.module.css'
+
+// Card two: one run, end to end. The script asks for a network door its manifest never declared; the op refuses
+// it with a named CapabilityError and the run ends with exit 7. The output line is the binary's own (the CLI
+// reference's exit-7 demo). "Run again" replays the three events once; nothing moves on its own.
+const events = [
+  { icon: '<polygon points="6 3 20 12 6 21 6 3"/>', title: 'Script started', meta: 'V8 · deno_core' },
+  { icon: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>', title: 'Fetch denied', meta: 'CapabilityError' },
+  { icon: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/>', title: 'Exit 7', meta: 'capability' },
+]
+---
+
+<div class={`glow ${panel.panel} ${s.panel}`} style="--gx: 100%; --gy: 0%;" data-run>
+  <div class={`float ${s.window}`}>
+    <div class={s.bar}>
+      <span class={s.dots} aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class={`mono ${s.file}`}>fetch.js</span>
+      <button type="button" class={s.again} data-run-again>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Run again
+      </button>
+    </div>
+    <pre class={`mono ${s.code}`}><span class={s.comment}>// the manifest declares no network</span>
+<span class={s.kw}>await</span> rt.fetch(<span class={s.str}>"https://app.example.com/"</span>)
+
+<span class={s.prompt}>$</span> jsrt run fetch.js
+<span class={s.err}>CapabilityError: fetch denied: app.example.com:443 is not a declared net destination</span></pre>
+  </div>
+  <ol class={s.events} aria-label="What happened in the run">
+    {
+      events.map((e, i) => (
+        <li class={s.event} style={`--i: ${i}`}>
+          <span class={s.tile} aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={e.icon} />
+          </span>
+          <span class={s.title}>{e.title}</span>
+          <span class={`mono ${s.meta}`}>{e.meta}</span>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<script>
+  const card = document.querySelector<HTMLElement>('[data-run]')
+  const again = card?.querySelector<HTMLButtonElement>('[data-run-again]')
+  if (card && again) {
+    again.addEventListener('click', () => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      delete card.dataset.play
+      void card.offsetWidth
+      card.dataset.play = 'go'
+    })
+  }
+</script>

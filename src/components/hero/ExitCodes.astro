@@ -1,0 +1,82 @@
+---
+import panel from './panel.module.css'
+import s from './ExitCodes.module.css'
+
+// Card three: the exit contract, the reference's payment-terms picker. Every way a run ends has one code (the
+// CLI reference); hovering, focusing or arrowing through the rows moves the supervisor's pointer and reads that
+// ending out below. Four of the eight codes are shown: the ones a script itself can cause.
+const codes = [
+  { code: 0, name: 'clean', text: 'The script ran to completion.' },
+  { code: 5, name: 'exception', text: 'The script threw and nothing caught it.' },
+  { code: 6, name: 'terminated', text: 'The timeout watchdog or V8 stopped it. Not a script error.' },
+  { code: 7, name: 'capability', text: 'An op refused a grant the manifest never declared.' },
+]
+const start = 3
+---
+
+<div class={`glow ${panel.panel}`} style="--gx: 100%; --gy: 100%;">
+  <div class={`float ${s.box}`} data-exits>
+    <p class={s.head}>How did it end?</p>
+    <div class={s.list} role="radiogroup" aria-label="Exit codes">
+      {
+        codes.map((c, i) => (
+          <button
+            type="button"
+            role="radio"
+            class={s.row}
+            aria-checked={String(i === start)}
+            tabindex={i === start ? 0 : -1}
+            data-exit={c.code}
+            data-text={c.text}
+          >
+            <span class={`mono ${s.code}`}>{c.code}</span>
+            <span class={s.name}>{c.name}</span>
+            {i === start && (
+              <span class={s.pointer} aria-hidden="true" data-pointer>
+                <svg viewBox="0 0 24 24"><path d="M4 3l7.5 18 2.6-7.4L21.5 11z" /></svg>
+                <span>supervisor</span>
+              </span>
+            )}
+          </button>
+        ))
+      }
+    </div>
+    <p class={s.read} aria-live="polite" data-exit-read>
+      <span class="mono">$ echo $?</span>
+      <strong class="mono" data-exit-code>{codes[start].code}</strong>
+      <span data-exit-text>{codes[start].text}</span>
+    </p>
+  </div>
+</div>
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-exits]')
+  if (box) {
+    const rows = [...box.querySelectorAll<HTMLButtonElement>('[data-exit]')]
+    const pointer = box.querySelector<HTMLElement>('[data-pointer]')!
+    const code = box.querySelector<HTMLElement>('[data-exit-code]')!
+    const text = box.querySelector<HTMLElement>('[data-exit-text]')!
+    const pick = (row: HTMLButtonElement, focus = false) => {
+      for (const r of rows) {
+        const on = r === row
+        r.setAttribute('aria-checked', String(on))
+        r.tabIndex = on ? 0 : -1
+      }
+      row.append(pointer)
+      code.textContent = row.dataset.exit!
+      text.textContent = row.dataset.text!
+      if (focus) row.focus()
+    }
+    for (const r of rows) {
+      r.addEventListener('mouseenter', () => pick(r))
+      r.addEventListener('click', () => pick(r))
+      r.addEventListener('keydown', (e) => {
+        const i = rows.indexOf(r)
+        const next = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? i - 1 : null
+        if (next === null) return
+        e.preventDefault()
+        pick(rows[(next + rows.length) % rows.length], true)
+      })
+    }
+  }
+</script>

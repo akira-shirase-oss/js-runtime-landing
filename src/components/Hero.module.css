@@ -1,85 +1,29 @@
 .hero {
   width: 100%;
   display: flex;
-  justify-content: center;
-  padding: var(--panel-inset) var(--panel-inset) 0;
-  background: var(--c-bg);
-}
-.card {
-  position: relative;
-  width: 100%;
-  max-width: var(--panel-max);
-  height: 619px;
-  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-xl);
-  overflow: clip;
-  isolation: isolate;
+  padding: 0 var(--content-pad);
 }
-
-/* The icon field: quiet marks around the edges in muted ink, never in the clear zone around the words. They stand still: no loop, no pointer tracking, so an
-   idle page paints nothing. Hovering one turns it amber and brightens it, in CSS (transform, colour and opacity, 150ms). */
-.field {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-}
-.mark {
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--s);
-  height: var(--s);
-  margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
-  color: var(--c-hero-icon);
-  opacity: 0.35;
-  transform: rotate(var(--r));
-  transition:
-    opacity 0.15s var(--ease),
-    color 0.15s var(--ease);
-}
-.mark svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.15s var(--ease);
-}
-@media (hover: hover) {
-  .mark:hover {
-    opacity: 1;
-    color: var(--c-primary);
-  }
-  .mark:hover svg {
-    transform: rotate(10deg) scale(1.06);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mark,
-  .mark svg {
-    transition: none;
-  }
-}
-
-.title {
-  position: relative;
-  z-index: 2;
-  width: 1100px;
-  max-width: calc(100% - 64px);
+.intro {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
+  max-width: 920px;
+  padding-top: 88px;
   text-align: center;
 }
-.title h1 {
-  max-width: 100%;
-}
 .headline {
-  color: var(--c-ink);
+  max-width: 14ch;
 }
-/* The two calls: the amber docs button, then the outline GitHub button beside it. */
+.sub {
+  max-width: 54ch;
+  font-family: var(--font-text);
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--c-text);
+}
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -87,58 +31,71 @@
   gap: 12px;
   margin-top: 8px;
 }
-/* 17.5px on a phone, growing to 20px from about 1024px wide */
-.sub {
-  max-width: 60ch;
-  font-size: clamp(17px, 15.9px + 0.4vw, 20px);
-  line-height: 1.5;
+.proof {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 10px;
+  margin-top: 16px;
+  font-family: var(--font-text);
+  font-size: 15px;
   color: var(--c-text);
 }
-
-@media (max-width: 1199px) {
-  .card {
-    max-width: none;
+.proof strong {
+  font-weight: 600;
+  color: var(--c-ink);
+}
+/* five small amber ticks, the reference's star row, here a mark per 200,000 refusals */
+.ticks {
+  display: inline-flex;
+  gap: 3px;
+}
+.ticks i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--c-primary);
+}
+.cards {
+  width: 100%;
+  max-width: var(--content-max);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 72px;
+}
+@media (max-width: 1099px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
   }
-  .title {
-    width: 100%;
-    max-width: 760px;
+  .cards > :last-child {
+    grid-column: 1 / -1;
   }
 }
-@media (max-width: 809px) {
-  .hero {
-    padding: 100px var(--panel-inset) 0;
+@media (max-width: 899px) {
+  .intro {
+    padding-top: 56px;
   }
-  .card {
-    height: auto;
-    padding: 120px 20px;
-  }
-  .title h1 {
-    width: 100%;
+  .t-hero {
+    font-size: 44px;
   }
 }
-
-@media (max-width: 1199px) {
-  .title h1 {
-    font-size: 46px;
+@media (max-width: 699px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .sub {
+    font-size: 17px;
   }
 }
-@media (max-width: 809px) {
-  .title h1 {
-    font-size: 34px;
+@media (max-width: 899px) {
+  .headline {
+    font-size: 44px;
   }
-  .title {
-    max-width: 100%;
-  }
-  /* four marks on a phone, in the corners, clear of the words */
-  .mark {
-    display: none;
-  }
-  .mark.onPhone {
-    display: block;
-    left: var(--px-x);
-    top: var(--px-y);
-    width: min(var(--s), 40px);
-    height: min(var(--s), 40px);
-    margin: calc(min(var(--s), 40px) / -2) 0 0 calc(min(var(--s), 40px) / -2);
+}
+@media (max-width: 499px) {
+  .headline {
+    font-size: 36px;
   }
 }

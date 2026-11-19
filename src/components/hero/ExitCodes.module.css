@@ -1,0 +1,111 @@
+.box {
+  width: 100%;
+  max-width: 360px;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.head {
+  font-family: var(--font-title);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--c-ink);
+}
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 56px;
+  padding: 0 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px var(--c-line);
+  font-family: var(--font-text);
+  font-size: 16px;
+  color: var(--c-ink);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    box-shadow 0.15s var(--ease),
+    background-color 0.15s var(--ease);
+}
+.row[aria-checked='true'] {
+  box-shadow: inset 0 0 0 1.5px var(--c-ink);
+  background: var(--c-surface);
+}
+.row:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
+.code {
+  width: 22px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-accent);
+}
+.name {
+  font-size: 15px;
+}
+/* The supervisor's pointer and its name tag, the reference's cursor with "Anderson" */
+.pointer {
+  position: absolute;
+  right: 14px;
+  bottom: -14px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  pointer-events: none;
+}
+.pointer svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--c-ink);
+  stroke: var(--c-card);
+  stroke-width: 1.5;
+  margin: -6px -2px 0 0;
+}
+.pointer span {
+  margin-top: 8px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--c-ink);
+  color: var(--c-card);
+  font-family: var(--font-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+.read {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  align-items: baseline;
+  min-height: 4.4em;
+  padding-top: 12px;
+  border-top: 1px solid var(--c-line);
+  font-family: var(--font-text);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--c-text);
+}
+.read :global(.mono) {
+  font-size: 12px;
+}
+.read strong {
+  font-size: 13px;
+  color: var(--c-ink);
+}
+.read [data-exit-text] {
+  grid-column: 1 / -1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .row {
+    transition: none;
+  }
+}

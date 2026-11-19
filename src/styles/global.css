@@ -26,13 +26,13 @@
   font-style: normal;
   font-display: swap;
 }
-/* Metrics measured at weight 650 (titles), 400 (text) and 400 (code) against Arial and Courier New. */
+/* Metrics measured at weight 600 (titles), 400 (text) and 400 (code) against Arial and Courier New. */
 @font-face {
   font-family: 'Science Gothic Fallback';
   src: local('Arial'), local('Helvetica'), local('Liberation Sans');
-  size-adjust: 135.52%;
-  ascent-override: 80.28%;
-  descent-override: 28.63%;
+  size-adjust: 133.71%;
+  ascent-override: 81.37%;
+  descent-override: 29.02%;
   line-gap-override: 0%;
 }
 @font-face {
@@ -63,6 +63,8 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* large showcase panels only: a step past xl in the same family */
+  --radius-2xl: calc(var(--radius) + 14px);
 
   /* One easing curve for every transition; --spring is kept as an alias for older rules */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -76,7 +78,7 @@
   --panel-max: 1380px;
   --panel-inset: 20px;
   --panel-pad: 32px;
-  --content-max: 1176px;
+  --content-max: 1240px;
   --content-pad: calc(var(--panel-inset) + var(--panel-pad));
   --section-gap: clamp(72px, 9vw, 128px);
 }
@@ -113,7 +115,7 @@ html {
   }
 }
 body {
-  background: var(--c-bg);
+  background: var(--c-page);
   color: var(--c-ink);
   font-family: var(--font-text);
   -webkit-font-smoothing: antialiased;
@@ -149,7 +151,7 @@ p {
   font-weight: inherit;
   font-size: inherit;
 }
-/* Science Gothic: a real variable weight, so titles use 650 and never a synthesised bold. */
+/* Science Gothic: a real variable weight, so titles use 600 and never a synthesised bold. */
 .t-hero,
 .t-h2 {
   font-synthesis: none;
@@ -173,14 +175,14 @@ figcaption {
   font-family: var(--font-title);
   font-size: 60px;
   line-height: 1.08;
-  font-weight: 650;
+  font-weight: 600;
   color: var(--c-ink);
 }
 .t-h2 {
   font-family: var(--font-title);
   font-size: 42px;
   line-height: 1.1;
-  font-weight: 650;
+  font-weight: 600;
   color: var(--c-ink);
 }
 /* the soft second phrase in many headings: the same face, set back in muted grey */
@@ -322,4 +324,47 @@ figcaption {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ---------- jsrt landing: shared pieces ---------- */
+/* The section badge: a small pill with the jsrt mark in amber, above a title (the references' eyebrow). */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--c-card);
+  box-shadow: inset 0 0 0 1px var(--c-line);
+  font-family: var(--font-text);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--c-ink);
+}
+.badge svg {
+  width: 15px;
+  height: 15px;
+  color: var(--c-primary);
+  flex-shrink: 0;
+}
+/* A title's second phrase, set back in muted ink: "Bold lead. muted continuation." */
+.lead {
+  color: var(--c-ink);
+}
+/* The amber field the showcase panels sit on (static; nothing moves). Each panel can shift the light with --gx/--gy. */
+.glow {
+  background:
+    radial-gradient(90% 80% at var(--gx, 0%) var(--gy, 0%), var(--c-glow-a) 0%, transparent 70%),
+    radial-gradient(80% 90% at calc(100% - var(--gx, 0%)) calc(100% - var(--gy, 0%)), var(--c-glow-c) 0%, transparent 75%),
+    linear-gradient(160deg, var(--c-glow-a) 0%, var(--c-glow-b) 100%);
+}
+/* A floating card inside a panel: the card ground, the theme's border and its medium shadow. */
+.float {
+  background: var(--c-card);
+  border-radius: var(--radius-2xl);
+  box-shadow: inset 0 0 0 1px var(--c-line), var(--shadow-md);
+}
+.mono {
+  font-family: var(--font-code);
 }

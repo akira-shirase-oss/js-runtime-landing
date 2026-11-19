@@ -1,84 +1,85 @@
 ---
+import ArrowButton from './ui/ArrowButton.astro'
 import { REPO, DOCS_URL, CHANGELOG_URL, X_URL } from '../data/site'
-import MaskIcon from './ui/MaskIcon.astro'
-import BrandLogo from './ui/BrandLogo.astro'
-import styles from './Footer.module.css'
+import s from './Footer.module.css'
 
-// The footer links only to what exists: the docs, the changelog, the repository and its issue tracker.
-const columns = [
-  {
-    title: 'Product',
-    links: [
-      { label: 'Docs', href: DOCS_URL },
-      { label: 'Changelog', href: CHANGELOG_URL },
-      { label: 'Quick start', href: `${DOCS_URL}/quick-start/` },
-    ],
-  },
-  {
-    title: 'Build',
-    links: [
-      { label: 'Source code', href: REPO },
-      { label: 'Open an issue', href: `${REPO}/issues` },
-      { label: 'Load evidence', href: `${REPO}/tree/main/perf` },
-    ],
-  },
+// The close, after the reference: a last call with the build command to copy, a few jsrt marks scattered round
+// it (still; they tilt when pointed at), then the footer's columns on an amber field and the oversized
+// wordmark at the foot. Links only to what exists.
+const BUILD = 'cargo build --release --locked -p jsrt'
+const marks = [
+  { x: 8, y: 22, r: -12, tone: 'a', paths: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>' },
+  { x: 14, y: 70, r: 10, tone: 'b', paths: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>' },
+  { x: 88, y: 18, r: 14, tone: 'c', paths: '<path d="m4 17 6-6-6-6"/><path d="M12 19h8"/>' },
+  { x: 86, y: 66, r: -8, tone: 'a', paths: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/>' },
 ]
-
-const socials = [
-  { icon: '/icons/x.svg', label: 'jsrt on X', href: X_URL },
-  { icon: '/icons/github.svg', label: 'jsrt on GitHub', href: REPO },
+const columns = [
+  { title: 'Product', links: [['Docs', DOCS_URL], ['Quick start', `${DOCS_URL}/quick-start/`], ['Changelog', CHANGELOG_URL], ['Releases', `${REPO}/releases`]] },
+  { title: 'Reference', links: [['CLI', `${DOCS_URL}/reference/cli/`], ['Manifest', `${DOCS_URL}/reference/manifest/`], ['rt.* API', `${DOCS_URL}/reference/rt-api/`], ['Supervise', `${DOCS_URL}/self-hosting/supervise/`]] },
+  { title: 'Community', links: [['GitHub', REPO], ['Issues', `${REPO}/issues`], ['Load evidence', `${REPO}/tree/main/perf`], ['X', X_URL]] },
+  { title: 'Legal', links: [['MIT License', `${REPO}/blob/main/LICENSE`]] },
 ]
 ---
 
-<footer class={styles.footer}>
-  <div class={styles.inner}>
-    <div class={styles.top}>
-      <a href="/" aria-label="jsrt home">
-        <BrandLogo />
-      </a>
-      <div class={styles.social}>
-        <p class="t-tiny">Social media</p>
-        <div class={styles.socialButtons}>
-          {
-            socials.map((s) => (
-              <a href={s.href} aria-label={s.label} class={styles.socialBtn}>
-                <MaskIcon src={s.icon} size={24} color="var(--c-ink)" />
-              </a>
-            ))
-          }
-        </div>
-      </div>
-    </div>
-
-    <div class={styles.links}>
-      <p class={`t-tiny ${styles.tagline}`}>
-        A purpose-built JavaScript host in Rust: every capability declared, every ending classified.
-      </p>
-      <nav class={styles.menu} aria-label="Footer">
-        {
-          columns.map((c) => (
-            <div class={styles.column}>
-              <p class={`t-label ${styles.colTitle}`}>
-                <span class={styles.square} aria-hidden="true" />
-                {c.title}
-              </p>
-              {c.links.map((l) => (
-                <a href={l.href} class={`t-tiny ${styles.link}`}>
-                  {l.label}
-                </a>
-              ))}
-            </div>
-          ))
-        }
-      </nav>
-    </div>
-
-    <div class={styles.legal}>
-      <p class="t-small">© 2026 jsrt&nbsp;· <span class={styles.keep}>Made with <a href={REPO}>Rust and V8</a></span></p>
-      <p class={`t-small ${styles.imprint}`}>Set in Science Gothic, Plus Jakarta Sans and JetBrains Mono</p>
-    </div>
-    <div class={styles.wordmark}>
-      <span class={styles.wordmarkText} aria-hidden="true">jsrt</span>
-    </div>
+<section class={s.cta}>
+  <div class={s.marks} aria-hidden="true">
+    {
+      marks.map((m) => (
+        <span class={`${s.mark} ${s[m.tone]}`} style={`--x: ${m.x}%; --y: ${m.y}%; --r: ${m.r}deg;`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" set:html={m.paths} />
+        </span>
+      ))
+    }
   </div>
+  <h2 class={`t-h2 ${s.ctaTitle}`}>Ready to run the script you were worried about?</h2>
+  <div class={s.actions}>
+    <ArrowButton href={`${DOCS_URL}/quick-start/`}>Get started with jsrt</ArrowButton>
+    <button type="button" class={s.copy} data-copy-cmd={BUILD} aria-label={`Copy: ${BUILD}`}>
+      <span class="mono">{BUILD}</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+      <span class={s.done} aria-live="polite" data-copy-state></span>
+    </button>
+  </div>
+</section>
+
+<footer class={s.footer}>
+  <div class={s.inner}>
+    <p class={s.tagline}>Declare it. Run it.<br />Name every ending.</p>
+    <nav class={s.columns} aria-label="Footer">
+      {
+        columns.map((c) => (
+          <div class={s.col}>
+            <p class={s.colTitle}>{c.title}</p>
+            {c.links.map(([label, href]) => (
+              <a href={href} class={s.link}>
+                {label}
+              </a>
+            ))}
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+  <p class={s.legal}>© 2026 jsrt · MIT · Set in Science Gothic, Plus Jakarta Sans and JetBrains Mono</p>
+  <div class={s.wordmark} aria-hidden="true">jsrt</div>
 </footer>
+
+<script>
+  const b = document.querySelector<HTMLButtonElement>('[data-copy-cmd]')
+  const state = b?.querySelector<HTMLElement>('[data-copy-state]')
+  if (b && state) {
+    b.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.copyCmd!)
+        state.textContent = 'Copied'
+      } catch {
+        state.textContent = 'Select to copy'
+      }
+      b.dataset.copied = 'true'
+      setTimeout(() => {
+        delete b.dataset.copied
+        state.textContent = ''
+      }, 1600)
+    })
+  }
+</script>

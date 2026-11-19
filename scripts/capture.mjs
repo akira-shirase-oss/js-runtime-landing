@@ -52,8 +52,7 @@ for (const width of [1440, 390]) {
     const page = await browser.newPage({ viewport, colorScheme })
     await page.goto(origin + '/', { waitUntil: 'networkidle' })
     await page.evaluate(() => document.fonts.ready)
-    // Walk the page like a reader: step to the bottom so every reveal and the footer wordmark's print
-    // fire, then back to the top. 'instant' matters — the page's smooth scroll-behavior turns a plain
+    // Walk the page like a reader: step to the bottom so lazy work happens, then back to the top. 'instant' matters — the page's smooth scroll-behavior turns a plain
     // scrollTo into an animated glide that a fast loop only ever chases, and the wordmark stays armed.
     await page.evaluate(async () => {
       const pause = () => new Promise((r) => setTimeout(r, 60))
@@ -66,14 +65,8 @@ for (const width of [1440, 390]) {
       await pause()
       window.scrollTo({ top: 0, behavior: 'instant' })
     })
-    // Then wait, strictly, for every once-only effect to be done: no grid left pending, and the
-    // wordmark's clip fully released ('none', or an inset whose values all parse to zero).
-    await page.waitForFunction(() => {
-      const pending = [...document.querySelectorAll('[data-reveal]')].some((g) => g.dataset.reveal === 'pending')
-      const clip = getComputedStyle(document.querySelector('[data-wordmark]')).clipPath
-      const unclipped = clip === 'none' || (clip.startsWith('inset(') && clip.slice(6, -1).trim().split(/\s+/).every((v) => parseFloat(v) === 0))
-      return !pending && unclipped
-    })
+    // Then wait for the web fonts, so the shot shows the real faces and not their fallbacks.
+    await page.evaluate(() => document.fonts.ready)
     await page.waitForTimeout(400)
     const name = `home-${width}-${colorScheme}.png`
     await page.screenshot({ path: join(out, name), fullPage: true })

@@ -79,8 +79,8 @@ const version = browser.version()
 const problems = []
 let interactions = 0
 
-async function visit(path, viewport, act, colorScheme = 'light') {
-  const context = await browser.newContext({ viewport, colorScheme })
+async function visit(path, viewport, act, colorScheme = 'light', extra = {}) {
+  const context = await browser.newContext({ viewport, colorScheme, ...extra })
   await context.addInitScript(() => {
     window.__csp = []
     window.__cls = 0
@@ -174,7 +174,7 @@ await visit('/', desktop, async (page, report) => {
   if (!(s.vt >= 1)) report('with motion allowed, the switch did not run as a view transition')
   await page.reload({ waitUntil: 'domcontentloaded' })
   const early = await page.evaluate(() => ({ theme: document.documentElement.dataset.theme, bg: getComputedStyle(document.documentElement).getPropertyValue('--c-bg').trim() }))
-  if (early.theme !== 'dark' || early.bg !== '#121211') report(`a stored Dark is not applied before first paint: ${JSON.stringify(early)}`)
+  if (early.theme !== 'dark' || early.bg !== 'oklch(20.46% 0 0)') report(`a stored Dark is not applied before first paint: ${JSON.stringify(early)}`)
   await page.waitForLoadState('networkidle')
   await page.locator('[data-theme-toggle]').focus()
   await page.keyboard.press('Enter')
@@ -219,27 +219,19 @@ await visit('/', desktop, async (page, report) => {
   if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== 'light') report('with storage blocked, the toggle did not switch to Light')
 }, 'dark')
 
-// The hero title prints at load but is real text from the first moment: in the accessibility tree at once,
-// fully revealed by 1.5 s, and still when motion is reduced.
+// The hero title is real text, in the accessibility tree from the first moment; nothing on the page animates
+// at rest (every animation here is one a visitor started).
 {
   const context = await browser.newContext({ viewport: phone })
   const page = await context.newPage()
-  await page.goto(origin + '/', { waitUntil: 'domcontentloaded' })
+  await page.goto(origin + '/', { waitUntil: 'load' })
   const tree = await page.locator('h1').ariaSnapshot()
-  const early = await page.evaluate(() => { const h = document.querySelector('h1'); return { print: h.dataset.print, lines: getComputedStyle(h).getPropertyValue('--print-lines') } })
   interactions++
   if (!/Run JavaScript/.test(tree)) problems.push(`/ [hero title]: not in the accessibility tree at load (${tree})`)
-  if (early.print !== 'go') problems.push(`/ [hero title]: the print was not armed (${JSON.stringify(early)})`)
-  await page.waitForTimeout(1500)
-  const later = await page.evaluate(() => getComputedStyle(document.querySelector('h1')).clipPath)
-  if (later !== 'none' && !/inset\(0px\)/.test(later)) problems.push(`/ [hero title]: not fully shown after 1.5 s (clip-path ${later})`)
+  await page.waitForTimeout(600)
+  const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').map((a) => a.animationName || a.constructor.name))
+  if (running.length) problems.push(`/ [at rest]: ${running.length} animation(s) running with no input: ${running.slice(0, 3).join(', ')}`)
   await context.close()
-  const still = await browser.newContext({ viewport: phone, reducedMotion: 'reduce' })
-  const quiet = await still.newPage()
-  await quiet.goto(origin + '/', { waitUntil: 'domcontentloaded' })
-  const s = await quiet.evaluate(() => { const h = document.querySelector('h1'); return { print: h.dataset.print ?? null, anim: getComputedStyle(h).animationName } })
-  if (s.print !== null || s.anim !== 'none') problems.push(`/ [hero title, reduced motion]: it still prints (${JSON.stringify(s)})`)
-  await still.close()
 }
 
 // Masks are cheap on an icon and expensive over a large area: no element bigger than 48px may be masked or
@@ -263,54 +255,34 @@ for (const viewport of [desktop, phone]) {
   })
 }
 
-// The footer wordmark prints once when it scrolls into view, the card grids reveal once, and the hero's
-// icons stay where they are when the pointer moves (no tracking, no running animation). The wordmark is
-// still under reduced motion.
+// The interactions, each proved in a real browser: the manifest switches grant and refuse, the exit picker
+// follows the pointer and the arrow keys, the supervise tabs switch panels, the redaction toggle flips the
+// line, and "Run again" replays the events once (and not at all with reduced motion).
 await visit('/', desktop, async (page, report) => {
   interactions++
-  const before = await page.evaluate(() => document.querySelector('[data-wordmark]').dataset.print)
-  if (before !== 'go' && before !== 'armed') report(`the wordmark was not armed below the fold (data-print=${before})`)
-  await page.evaluate(() => document.querySelector('footer').scrollIntoView({ block: 'end' }))
-  await page.waitForTimeout(1500)
-  const after = await page.evaluate(() => { const w = document.querySelector('[data-wordmark]'); return { print: w.dataset.print, clip: getComputedStyle(w).clipPath } })
-  // Finished means back to the plain default: 'none', or an inset whose parsed values are all zero.
-  const unclipped = (clip) => clip === 'none' || (clip.startsWith('inset(') && clip.slice(6, -1).trim().split(/\s+/).every((v) => parseFloat(v) === 0))
-  if (after.print !== 'go' || !unclipped(after.clip)) report(`the wordmark never finished printing: ${JSON.stringify(after)}`)
-  for (const sel of ['[data-why]', '[data-proof]']) {
-    const reveal = await page.evaluate((sel) => document.querySelector(sel)?.dataset.reveal, sel)
-    if (reveal !== 'shown') report(`${sel} did not reveal in view (data-reveal=${reveal})`)
-  }
-  // A full-height view (what a full-page capture sees): no section may stay blank.
-  const fullHeight = await page.evaluate(() => document.documentElement.scrollHeight)
-  await page.setViewportSize({ width: desktop.width, height: fullHeight })
-  await page.waitForTimeout(900)
-  const blanks = await page.evaluate(() =>
-    [...document.querySelectorAll('[data-reveal]')]
-      .flatMap((g) => [...g.querySelectorAll('*')])
-      .filter((e) => e.children.length === 0 && e.textContent.trim() && getComputedStyle(e).opacity !== '1')
-      .map((e) => `${e.tagName.toLowerCase()} "${e.textContent.trim().slice(0, 40)}" at opacity ${getComputedStyle(e).opacity}`)
-      .slice(0, 5),
-  )
-  for (const b of blanks) report(`still hidden in a full-height view: ${b}`)
-  await page.evaluate(() => scrollTo(0, 0))
-  const boxes = () => page.evaluate(() => [...document.querySelectorAll('[data-hero-field] > span')].map((e) => { const r = e.getBoundingClientRect(); return `${Math.round(r.left)},${Math.round(r.top)}` }).join(' '))
-  const at = await boxes()
-  await page.mouse.move(40, 200)
-  await page.mouse.move(1300, 700, { steps: 10 })
-  await page.waitForTimeout(300)
-  if ((await boxes()) !== at) report('the hero icons moved with the pointer')
-  const running = await page.evaluate(() => document.getAnimations().filter((a) => a.effect?.getComputedTiming().iterations === Infinity).length)
-  if (running) report(`${running} animation(s) run forever`)
+  const kv = page.locator('[data-cap]', { hasText: 'KV store' })
+  await kv.click()
+  if ((await kv.getAttribute('aria-pressed')) !== 'true') report('the KV store switch did not turn on')
+  const caps = await page.locator('[data-caps-result]').textContent()
+  if (!/^3 doors declared/.test(caps.trim())) report(`the manifest summary did not count 3 doors: "${caps}"`)
+  await page.locator('[data-exit="0"]').hover()
+  if ((await page.locator('[data-exit-code]').textContent()) !== '0') report('hovering exit 0 did not read it out')
+  await page.locator('[data-exit="0"]').focus()
+  await page.keyboard.press('ArrowDown')
+  if ((await page.locator('[data-exit="5"]').getAttribute('aria-checked')) !== 'true') report('ArrowDown did not move the exit picker to 5')
+  await page.locator('[data-tab]', { hasText: 'Report' }).click()
+  if (await page.locator('#sv-report').isHidden()) report('the Report tab did not show its panel')
+  if (await page.locator('#sv-time').isVisible()) report('the Timeline panel stayed visible after switching tabs')
+  await page.locator('[data-peek]').click()
+  if ((await page.locator('[data-redact]').getAttribute('data-raw')) !== 'true') report('the redaction toggle did not show the raw line')
+  await page.locator('[data-run-again]').click()
+  if ((await page.locator('[data-run]').getAttribute('data-play')) !== 'go') report('Run again did not replay the events')
 })
-{
-  const context = await browser.newContext({ viewport: desktop, reducedMotion: 'reduce' })
-  const page = await context.newPage()
-  await page.goto(origin + '/', { waitUntil: 'networkidle' })
+await visit('/', desktop, async (page, report) => {
   interactions++
-  const still = await page.evaluate(() => ({ print: document.querySelector('[data-wordmark]').dataset.print ?? null, running: document.getAnimations().length }))
-  if (still.print !== null || still.running) problems.push(`/ [reduced motion]: something still moves: ${JSON.stringify(still)}`)
-  await context.close()
-}
+  await page.locator('[data-run-again]').click()
+  if ((await page.locator('[data-run]').getAttribute('data-play')) !== null) report('with reduced motion, Run again still animated')
+}, 'light', { reducedMotion: 'reduce' })
 
 // With JavaScript off the page is complete: every section's text is simply there — no reveal, no print,
 // no script ever asked to run.
@@ -349,7 +321,7 @@ await visit('/', desktop, async (page, report) => {
     ['main h2', 'Science Gothic'],
     ['main p', 'Plus Jakarta Sans'],
     ['nav a', 'Plus Jakarta Sans'],
-    ['footer p', 'Plus Jakarta Sans'],
+    ['footer > p', 'Plus Jakarta Sans'],
     ['footer a', 'Plus Jakarta Sans'],
   ]
   for (const [selector, family] of want) {
@@ -370,16 +342,16 @@ await visit('/', desktop, async (page, report) => {
 })
 
 // The home page's layout system: the header and every section's content column start at the same x (within 1 px),
-// and every gap between consecutive sections is the same (within 4 px), at desktop and phone widths.
+// and every gap between consecutive sections in main is the same (within 4 px), at desktop and phone widths. The
+// closing call and the footer are centred and narrower by design (the reference), so they are not in the column.
 for (const viewport of [desktop, phone, { width: 360, height: 780 }]) {
   await visit('/', viewport, async (page, report) => {
     interactions++
     const m = await page.evaluate(() => {
       const sections = [...document.querySelectorAll('main > section')]
-      const panel = document.querySelector('footer > div')
-      const boxes = [sections[0].firstElementChild, ...sections.slice(1), panel].map((e) => e.getBoundingClientRect())
+      const boxes = sections.map((e) => e.getBoundingClientRect())
       const gaps = boxes.slice(1).map((b, i) => Math.round(b.top - boxes[i].bottom))
-      const lefts = [document.querySelector('header nav > div'), ...sections.slice(1).map((s) => s.firstElementChild), panel.firstElementChild].map((e) => Math.round(e.getBoundingClientRect().left))
+      const lefts = [document.querySelector('header nav > div'), ...sections.slice(1).map((s) => s.firstElementChild)].map((e) => Math.round(e.getBoundingClientRect().left))
       return { gaps, lefts }
     })
     if (Math.max(...m.lefts) - Math.min(...m.lefts) > 1) report(`home sections start at different x: ${m.lefts.join(', ')}`)

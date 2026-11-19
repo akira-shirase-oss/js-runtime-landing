@@ -69,8 +69,31 @@
   --c-hero-bg: oklch(0.9846 0.0017 247.8389);
   --c-hero-icon: oklch(0.5471 0.0321 263.2921);
 
+  /* The page ground (the theme's muted) with white cards on it, as in the references; dark: the background. */
+  --c-page: oklch(0.9846 0.0017 247.8389);
+  --c-card: oklch(1 0 0);
+
+  /* Showcase cards: a soft amber field from the theme's accent and chart ramp (static, no motion). */
+  --c-glow-a: oklch(0.9869 0.0214 95.2774);
+  --c-glow-b: oklch(0.8447 0.1675 84.1157 / 0.5);
+  --c-glow-c: oklch(0.6739 0.1633 56.8909 / 0.42);
+
+  /* Refusals and failed endings: the theme's destructive hue, darkened for AA text in light. */
+  --c-danger: oklch(0.5770 0.2150 27.3250);
+  --c-danger-tint: oklch(0.6496 0.2362 26.9032 / 0.1);
+
+  /* Code: keys and strings in the amber ramp, comments in muted ink. */
+  --c-code-key: oklch(0.4910 0.1442 43.4774);
+  --c-code-string: oklch(0.5673 0.1563 47.2384);
+  --c-code-comment: oklch(0.5471 0.0321 263.2921);
+
+  /* The closing panel: the page fading into amber, with the wordmark in the card colour and an amber edge. */
+  --c-cta-top: oklch(0.9846 0.0017 247.8389);
+  --c-cta-bottom: oklch(0.8447 0.1675 84.1157 / 0.55);
+  --c-mark-edge: oklch(0.7857 0.1716 68.5720 / 0.45);
+
   /* The footer's oversized wordmark: a faint tone on the footer panel. */
-  --c-wordmark: oklch(0.9271 0.0075 260.7315);
+  --c-wordmark: oklch(1 0 0);
 
   /* Shadows, from the theme (one soft drop, stepped). */
   --shadow-xs: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.05);
@@ -144,8 +167,31 @@
     --c-hero-bg: oklch(0.2393 0 0);
     --c-hero-icon: oklch(0.7155 0 0);
 
+    /* The page ground (the theme's muted) with white cards on it, as in the references; dark: the background. */
+    --c-page: oklch(0.2046 0 0);
+    --c-card: oklch(0.2686 0 0);
+
+    /* Showcase cards: a soft amber field from the theme's accent and chart ramp (static, no motion). */
+    --c-glow-a: oklch(0.2686 0 0);
+    --c-glow-b: oklch(0.4910 0.1442 43.4774 / 0.55);
+    --c-glow-c: oklch(0.7857 0.1716 68.5720 / 0.28);
+
+    /* Refusals and failed endings: the theme's destructive hue, darkened for AA text in light. */
+    --c-danger: oklch(0.7040 0.1910 22.2160);
+    --c-danger-tint: oklch(0.6496 0.2362 26.9032 / 0.18);
+
+    /* Code: keys and strings in the amber ramp, comments in muted ink. */
+    --c-code-key: oklch(0.8447 0.1675 84.1157);
+    --c-code-string: oklch(0.7857 0.1716 68.5720);
+    --c-code-comment: oklch(0.7155 0 0);
+
+    /* The closing panel: the page fading into amber, with the wordmark in the card colour and an amber edge. */
+    --c-cta-top: oklch(0.2046 0 0);
+    --c-cta-bottom: oklch(0.4910 0.1442 43.4774 / 0.6);
+    --c-mark-edge: oklch(0 0 0 / 0.4);
+
     /* The footer's oversized wordmark: a faint tone on the footer panel. */
-    --c-wordmark: oklch(0.3715 0 0);
+    --c-wordmark: oklch(0.2686 0 0);
 
     /* Shadows, from the theme (one soft drop, stepped). */
     --shadow-xs: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.05);
@@ -220,8 +266,31 @@
   --c-hero-bg: oklch(0.2393 0 0);
   --c-hero-icon: oklch(0.7155 0 0);
 
+  /* The page ground (the theme's muted) with white cards on it, as in the references; dark: the background. */
+  --c-page: oklch(0.2046 0 0);
+  --c-card: oklch(0.2686 0 0);
+
+  /* Showcase cards: a soft amber field from the theme's accent and chart ramp (static, no motion). */
+  --c-glow-a: oklch(0.2686 0 0);
+  --c-glow-b: oklch(0.4910 0.1442 43.4774 / 0.55);
+  --c-glow-c: oklch(0.7857 0.1716 68.5720 / 0.28);
+
+  /* Refusals and failed endings: the theme's destructive hue, darkened for AA text in light. */
+  --c-danger: oklch(0.7040 0.1910 22.2160);
+  --c-danger-tint: oklch(0.6496 0.2362 26.9032 / 0.18);
+
+  /* Code: keys and strings in the amber ramp, comments in muted ink. */
+  --c-code-key: oklch(0.8447 0.1675 84.1157);
+  --c-code-string: oklch(0.7857 0.1716 68.5720);
+  --c-code-comment: oklch(0.7155 0 0);
+
+  /* The closing panel: the page fading into amber, with the wordmark in the card colour and an amber edge. */
+  --c-cta-top: oklch(0.2046 0 0);
+  --c-cta-bottom: oklch(0.4910 0.1442 43.4774 / 0.6);
+  --c-mark-edge: oklch(0 0 0 / 0.4);
+
   /* The footer's oversized wordmark: a faint tone on the footer panel. */
-  --c-wordmark: oklch(0.3715 0 0);
+  --c-wordmark: oklch(0.2686 0 0);
 
   /* Shadows, from the theme (one soft drop, stepped). */
   --shadow-xs: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.05);

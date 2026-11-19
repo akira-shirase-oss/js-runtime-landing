@@ -1,0 +1,154 @@
+---
+import Badge from './ui/Badge.astro'
+import { DOCS_URL } from '../data/site'
+import s from './Features.module.css'
+
+// Section four, the reference's bento. All output here is the binary's own, from the docs' CI-run examples: the
+// supervise wall-clock demo (looper.js, --wall-ms 400 → exit 6, killed_by wall-clock, signal 15), the redaction
+// demo (leaker.js, --redact-env) and the quick start's build commands.
+const report = `{"outcome":"terminated","exit_code":6, …
+ "killed_by":"wall-clock","signal":15}`
+const flags = [
+  ['--wall-ms', 'a deadline for the whole run'],
+  ['--max-rss-mb', 'memory footprint, polled'],
+  ['--max-cpu', 'CPU seconds, via RLIMIT_CPU'],
+  ['--kill-grace-ms', 'SIGTERM to SIGKILL, 500 ms default'],
+]
+const ops = ['rt.fetch', 'rt.readText', 'rt.kv', 'rt.serve', 'rt.media']
+const build = `git clone https://github.com/akira-shirase-oss/js-runtime.git
+cd js-runtime
+cargo build --release --locked -p jsrt
+./target/release/jsrt run hello.js`
+---
+
+<section class="section" id="features">
+  <div class={`container ${s.wrap}`}>
+    <header class={s.head}>
+      <Badge>What the host does</Badge>
+      <h2 class="t-h2">Everything that matters is ours</h2>
+    </header>
+    <div class={s.grid}>
+      <article class={`glow ${s.card} ${s.wide}`} style="--gx: 0%; --gy: 0%;">
+        <h3 class={s.title}><strong>Budgets that name who stopped it.</strong> CPU, memory and wall-clock, per worker.</h3>
+        <div class={`float ${s.window}`} data-tabs>
+          <div class={s.bar}>
+            <span class={s.dots} aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="mono">jsrt supervise looper.js --wall-ms 400</span>
+            <span class={s.tabs} role="tablist" aria-label="Supervised run">
+              <button type="button" role="tab" aria-selected="true" aria-controls="sv-time" id="sv-t1" data-tab>Timeline</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="sv-report" id="sv-t2" tabindex="-1" data-tab>Report</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="sv-flags" id="sv-t3" tabindex="-1" data-tab>Flags</button>
+            </span>
+          </div>
+          <div class={s.pane} role="tabpanel" id="sv-time" aria-labelledby="sv-t1">
+            <div class={s.lanes}>
+              <span class={s.lane}>looper.js</span>
+              <span class={s.track}><span class={`${s.span} ${s.run}`} style="--from: 0; --to: 80;">burning wall clock</span></span>
+              <span class={s.lane}>supervisor</span>
+              <span class={s.track}><span class={`${s.span} ${s.kill}`} style="--from: 80; --to: 82;"><em>SIGTERM at 400 ms</em></span></span>
+              <span class={s.lane}>report</span>
+              <span class={s.track}><span class={`${s.span} ${s.out}`} style="--from: 84; --to: 86;"><em>exit 6 · wall-clock</em></span></span>
+            </div>
+            <div class={`mono ${s.axis}`} aria-hidden="true"><span>0</span><span>100</span><span>200</span><span>300</span><span>400 ms</span><span></span></div>
+          </div>
+          <div class={s.pane} role="tabpanel" id="sv-report" aria-labelledby="sv-t2" hidden>
+            <pre class={`mono ${s.code}`}>{report}</pre>
+            <p class={s.paneNote}>One JSON line per run. <span class="mono">killed_by</span> names the budget, or <span class="mono">operator-sigterm</span>.</p>
+          </div>
+          <div class={s.pane} role="tabpanel" id="sv-flags" aria-labelledby="sv-t3" hidden>
+            <dl class={s.flags}>{flags.map(([f, t]) => <div><dt class="mono">{f}</dt><dd>{t}</dd></div>)}</dl>
+          </div>
+        </div>
+      </article>
+
+      <article class={s.card}>
+        <h3 class={s.title}><strong>Secrets stay out of the logs.</strong> Redaction on forwarded output.</h3>
+        <div class={`glow ${s.stage}`} style="--gx: 100%; --gy: 0%;">
+          <div class={`float ${s.term}`} data-redact>
+            <p class={`mono ${s.cmd}`}>$ jsrt supervise leaker.js --redact-env SECRET_VALUE</p>
+            <p class={`mono ${s.line}`}>the token is <span class={s.secret} data-raw>hunter2</span><span class={s.masked} data-masked>[redacted]</span></p>
+            <button type="button" class={s.peek} aria-pressed="false" data-peek>Show what the worker printed</button>
+          </div>
+          <span class={`float ${s.chip}`}>Terminal escapes neutralised</span>
+        </div>
+      </article>
+
+      <article class={s.card}>
+        <h3 class={s.title}><strong>One namespace.</strong> rt.* and nothing else.</h3>
+        <ul class={s.ops}>
+          {ops.map((o, i) => <li class="mono" style={`--i: ${i}`}>{o}</li>)}
+        </ul>
+      </article>
+
+      <article class={s.card}>
+        <h3 class={s.title}><strong>V8 inside, Rust in charge.</strong> Every op checks the grant.</h3>
+        <ol class={s.flow}>
+          <li><span class="mono">await rt.fetch(url)</span><small>your script, in V8</small></li>
+          <li><span class="mono">op_fetch</span><small>a Rust function</small></li>
+          <li><span class="mono">manifest.net?</span><small>granted, or a CapabilityError</small></li>
+        </ol>
+        <span class={`float ${s.pill}`}>51.5 ns per op call</span>
+      </article>
+
+      <article class={s.card}>
+        <h3 class={s.title}><strong>Start from a clone.</strong> The <a class="inline-link" href={`${DOCS_URL}/quick-start/`}>quick start</a> builds it.</h3>
+        <div class={`float ${s.window} ${s.codeWin}`}>
+          <div class={s.bar}>
+            <span class={s.dots} aria-hidden="true"><i></i><i></i><i></i></span>
+            <button type="button" class={s.copy} data-copy={build}>Copy</button>
+          </div>
+          <pre class={`mono ${s.code}`}>{build}</pre>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Tabs: click or arrow keys, one panel at a time (the WAI-ARIA tabs pattern).
+  const root = document.querySelector<HTMLElement>('[data-tabs]')
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')]
+    const select = (t: HTMLButtonElement, focus = false) => {
+      for (const x of tabs) {
+        const on = x === t
+        x.setAttribute('aria-selected', String(on))
+        x.tabIndex = on ? 0 : -1
+        document.getElementById(x.getAttribute('aria-controls')!)!.hidden = !on
+      }
+      if (focus) t.focus()
+    }
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t))
+      t.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+        if (!d) return
+        e.preventDefault()
+        select(tabs[(i + d + tabs.length) % tabs.length], true)
+      })
+    })
+  }
+  // Redaction: flip between what the worker printed and what the supervisor forwarded.
+  const term = document.querySelector<HTMLElement>('[data-redact]')
+  const peek = term?.querySelector<HTMLButtonElement>('[data-peek]')
+  if (term && peek) {
+    peek.addEventListener('click', () => {
+      const raw = peek.getAttribute('aria-pressed') !== 'true'
+      peek.setAttribute('aria-pressed', String(raw))
+      term.dataset.raw = String(raw)
+      peek.textContent = raw ? 'Show what was forwarded' : 'Show what the worker printed'
+    })
+  }
+  // Copy: the build commands to the clipboard, with a one-word confirmation.
+  for (const b of document.querySelectorAll<HTMLButtonElement>('#features [data-copy]')) {
+    b.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.copy!)
+        b.textContent = 'Copied'
+      } catch {
+        b.textContent = 'Select and copy'
+      }
+      setTimeout(() => (b.textContent = 'Copy'), 1600)
+    })
+  }
+</script>
