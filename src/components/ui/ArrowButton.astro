@@ -3,32 +3,33 @@ import styles from './ArrowButton.module.css'
 
 type Props = {
   href: string
-  variant?: 'primary' | 'secondary' | 'onBrand' | 'onBrandGhost'
+  /** primary: the amber call; secondary: the quiet filled one; outline: a hairline on the page */
+  variant?: 'primary' | 'secondary' | 'outline'
   /** stretch to the parent's width */
   block?: boolean
+  /** the trailing arrow (on by default) */
+  arrow?: boolean
 }
 
 /**
- * Dark (or white) pill with an accent square. On hover the pixel arrow
- * slides out to the right while a twin slides in, and the label rolls up.
+ * jsrt's button (design/theme.css): a rounded-md rectangle in the theme's colours, the label in Plus Jakarta
+ * Sans, and a lucide arrow-right that nudges 2px on hover (once, in CSS; still when motion is reduced).
  */
-const { href, variant = 'primary', block = false } = Astro.props
+const { href, variant = 'primary', block = false, arrow = true } = Astro.props
 const label = await Astro.slots.render('default')
 ---
 
 <a href={href} class={`${styles.button} ${styles[variant]} ${block ? styles.block : ''}`}>
-  <span class={styles.content}>
-    <span class={styles.square} aria-hidden="true">
-      <span class={styles.arrows}>
-        <span class={styles.arrow}></span>
-        <span class={styles.arrow}></span>
-      </span>
-    </span>
-    <span class={styles.text}>
-      <span class={styles.roll}>
-        <span set:html={label} />
-        <span aria-hidden="true" set:html={label} />
-      </span>
-    </span>
-  </span>
+  <span set:html={label} />
+  {arrow && (<svg
+    class={styles.arrow}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
+  >)}
 </a>

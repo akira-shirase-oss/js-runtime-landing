@@ -1,129 +1,78 @@
+/* jsrt's button, from the theme: radius-md, 40px tall (44px touch target on phones), medium-weight label, the
+   theme's soft shadow on filled variants. Colours are tokens only (tokens.css). */
 .button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  gap: 8px;
   height: 44px;
-  border-radius: 8px;
-  overflow: hidden;
+  padding: 0 20px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
   flex-shrink: 0;
+  transition:
+    background-color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease),
+    color 0.15s var(--ease);
 }
 .primary {
-  background: var(--c-ink);
-  color: var(--c-on-ink);
+  background: var(--c-button);
+  color: var(--c-on-primary);
+  box-shadow: var(--shadow-xs);
 }
 .secondary {
-  background: var(--c-on-ink);
+  background: var(--c-secondary);
+  color: var(--c-on-secondary);
+  box-shadow: var(--shadow-xs);
+}
+.outline {
+  background: var(--c-bg);
   color: var(--c-ink);
+  box-shadow: inset 0 0 0 1px var(--c-line), var(--shadow-xs);
+}
+@media (hover: hover) {
+  .primary:hover {
+    background: var(--c-tone-b);
+  }
+  .secondary:hover,
+  .outline:hover {
+    background: var(--c-accent-bg);
+    color: var(--c-accent);
+  }
 }
 .block {
   width: 100%;
 }
-/* On the brand block: a navy pill, a white square with a navy arrow, white text; the same in both themes. */
-.onBrand {
-  background: var(--c-brand-button);
-  color: var(--c-brand-button-text);
-}
-/* Its quiet sibling on the brand block: a navy hairline, navy type, the same navy square and white arrow. */
-.onBrandGhost {
-  background: transparent;
-  color: var(--c-on-brand);
-  box-shadow: inset 0 0 0 1px var(--c-brand-button);
-}
-/* A focus ring that shows on every ground: the page's focus colour, and navy on the brand block. */
 .button:focus-visible {
   outline: 2px solid var(--c-focus);
-  outline-offset: 3px;
-}
-.onBrand:focus-visible,
-.onBrandGhost:focus-visible {
-  outline-color: var(--c-on-brand);
-}
-
-.content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-  padding: 4px 12px 4px 4px;
-}
-
-.square {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  border-radius: 4px;
-  background: var(--c-accent);
-  overflow: hidden;
-}
-/* Two arrows side by side; the right one is visible at rest. */
-.arrows {
-  display: flex;
-  width: 48px;
-  margin-right: 6px;
-  transform: translateX(0);
-  transition: transform 0.45s var(--spring);
+  outline-offset: 2px;
 }
 .arrow {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
-  background: var(--c-ink);
-  -webkit-mask: url('/icons/arrow.svg') center / 100% 100% no-repeat;
-  mask: url('/icons/arrow.svg') center / 100% 100% no-repeat;
+  transition: transform 0.15s var(--ease);
 }
-.button:hover .arrows {
-  transform: translateX(24px);
+@media (hover: hover) {
+  .button:hover .arrow {
+    transform: translateX(2px);
+  }
 }
-
-.text {
-  display: block;
-  height: 17px;
-  overflow: hidden;
-  font-family: var(--font-text);
-  font-size: 14px;
-  line-height: 16.8px;
-  font-weight: 500;
-  white-space: nowrap;
+@media (max-width: 809px) {
+  .button {
+    height: 44px;
+  }
 }
-.roll {
-  display: flex;
-  flex-direction: column;
-  opacity: 0.9;
-  transition: transform 0.45s var(--spring);
-}
-.roll > span {
-  display: block;
-  height: 17px;
-}
-.button:hover .roll {
-  transform: translateY(-17px);
-}
-
-/* Ink / paper scheme, which swaps with the theme: primary = ink pill, paper square, ink arrow;
-   secondary = paper pill, ink square, paper arrow. */
-.primary .square {
-  background: var(--c-on-ink);
-}
-.primary .arrow {
-  background: var(--c-ink);
-}
-.secondary .square {
-  background: var(--c-ink);
-}
-.secondary .arrow {
-  background: var(--c-on-ink);
-}
-.onBrand .square {
-  background: var(--c-brand-button-text);
-}
-.onBrand .arrow {
-  background: var(--c-brand-button);
-}
-.onBrandGhost .square {
-  background: var(--c-brand-button);
-}
-.onBrandGhost .arrow {
-  background: var(--c-brand-button-text);
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .arrow {
+    transition: none;
+  }
+  .button:hover .arrow {
+    transform: none;
+  }
 }

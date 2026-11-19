@@ -1,0 +1,40 @@
+---
+import ArrowButton from './ui/ArrowButton.astro'
+import Badge from './ui/Badge.astro'
+import { REPO } from '../data/site'
+import s from './Metrics.module.css'
+
+// Section three, the reference's rising cards. Every number is v1.0.0's own committed evidence: the full-scale
+// CI load run (workflow load.yml, ubuntu-24.04, a 4-core Xeon 8573C runner) at commit 8dc8d32, 2026-11-19.
+// Each card opens the artifact that recorded it.
+const artifact = (f: string) => `${REPO}/blob/main/perf/results/${f}`
+const stats = [
+  { n: '51.5 ns', label: 'per op call, Rust to V8 and back, over a million calls', href: artifact('m7-2a-op-1m-2026-11-19T00-33-32Z-8dc8d32.json') },
+  { n: '1,000', label: 'supervised respawns, each classified, zero orphans', href: artifact('m8-4-supervise-churn-2026-11-19T00-47-21Z-8dc8d32.json') },
+  { n: '75,148', label: 'requests a second through rt.serve, a million served, zero errors', href: artifact('m7-2b-serve-1m-2026-11-19T00-33-45Z-8dc8d32.json') },
+  { n: '100%', label: 'of 1,000,000 refusals classified as a named CapabilityError', href: artifact('m8-3-refusal-flood-2026-11-19T00-45-56Z-8dc8d32.json') },
+]
+---
+
+<section class="section" id="proof">
+  <div class={`container ${s.wrap}`}>
+    <header class={s.head}>
+      <Badge>Measured, not claimed</Badge>
+      <h2 class="t-h2">Load-tested before it shipped</h2>
+      <p class={s.note}>v1.0.0's CI load run on a 4-core Xeon runner, commit 8dc8d32. Every card opens the recorded run.</p>
+      <ArrowButton href={`${REPO}/tree/main/perf/results`} arrow={false}>See the evidence</ArrowButton>
+    </header>
+    <ol class={s.steps}>
+      {
+        stats.map((x, i) => (
+          <li style={`--i: ${i}`}>
+            <a class={s.card} href={x.href}>
+              <span class={s.n}>{x.n}</span>
+              <span class={s.label}>{x.label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

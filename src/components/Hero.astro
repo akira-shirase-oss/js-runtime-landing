@@ -1,60 +1,36 @@
 ---
 import ArrowButton from './ui/ArrowButton.astro'
+import Badge from './ui/Badge.astro'
+import Capabilities from './hero/Capabilities.astro'
+import RunCard from './hero/RunCard.astro'
+import ExitCodes from './hero/ExitCodes.astro'
 import { hero } from '../data/hero'
 import { REPO, DOCS_URL } from '../data/site'
 import styles from './Hero.module.css'
 
-// Eight jsrt ideas as quiet line icons around the edges (lucide, stroke 1.5), placed outside the clear zone
-// around the words. x/y are the icon's centre in the card, s its size, r its resting turn; `phone` marks the
-// four that stay, in the corners, on a phone.
-const ICONS = [
-  { name: 'terminal', x: 7, y: 17, s: 68, r: -8, phone: { x: 9, y: 6 }, paths: '<path d="m4 17 6-6-6-6"/><path d="M12 19h8"/>' },
-  { name: 'shield-check', x: 29, y: 9, s: 34, r: 12, paths: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>' },
-  { name: 'ban', x: 89, y: 15, s: 56, r: 8, phone: { x: 88, y: 6 }, paths: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>' },
-  { name: 'gauge', x: 5, y: 56, s: 36, r: 6, paths: '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>' },
-  { name: 'cpu', x: 95, y: 52, s: 40, r: -10, paths: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/>' },
-  { name: 'file-text', x: 14, y: 84, s: 46, r: 10, phone: { x: 10, y: 94 }, paths: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>' },
-  { name: 'lock', x: 70, y: 91, s: 38, r: 4, paths: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>' },
-  { name: 'list-checks', x: 86, y: 82, s: 52, r: -6, phone: { x: 88, y: 94 }, paths: '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>' },
-]
-// Prints the title once at load, a pixel row at a time and line after line: it counts the title's lines
-// (before the first paint, so nothing flashes), then arms the shared `print` animation (global.css). The text
-// stays real text throughout; without this script, or with reduced motion, it is simply there.
-const PRINT_TITLE =
-  "var h=document.querySelector('[data-print-title]');if(h&&!matchMedia('(prefers-reduced-motion: reduce)').matches){var s=getComputedStyle(h),n=Math.max(1,Math.round(h.offsetHeight/parseFloat(s.lineHeight)));h.style.setProperty('--print-lines',n);h.style.setProperty('--print-steps',n*parseInt(s.getPropertyValue('--print-rows')||'29'));h.dataset.print='go'}"
-const place = (i: (typeof ICONS)[number]) =>
-  `--x: ${i.x}%; --y: ${i.y}%; --s: ${i.s}px; --r: ${i.r}deg;` +
-  (i.phone ? ` --px-x: ${i.phone.x}%; --px-y: ${i.phone.y}%;` : '')
+// The hero, after the reference: a badge, the two-line statement, one line under it, two calls, a proof line,
+// then three panels that each let a visitor touch one idea (grants, a run's events, the exit contract).
+const LOAD_RUN = `${REPO}/blob/main/perf/results/m8-3-refusal-flood-2026-11-19T00-45-56Z-8dc8d32.json`
 ---
 
 <section class={styles.hero}>
-  <div class={`brand-block ${styles.card}`}>
-    <div class={styles.field} aria-hidden="true" data-hero-field>
-      {
-        ICONS.map((i) => (
-          <span class={`${styles.mark} ${i.phone ? styles.onPhone : ''}`} style={place(i)}>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                focusable="false"
-                set:html={i.paths}
-              />
-          </span>
-        ))
-      }
+  <div class={styles.intro}>
+    <Badge>Open source · v1.0.0 · Rust + V8</Badge>
+    <h1 class={`t-hero ${styles.headline}`}>{hero.headline}</h1>
+    <p class={styles.sub}>{hero.sub}</p>
+    <div class={styles.actions}>
+      <ArrowButton href={REPO} variant="outline" arrow={false}>View on GitHub</ArrowButton>
+      <ArrowButton href={`${DOCS_URL}/quick-start/`}>Get started</ArrowButton>
     </div>
-    <div class={styles.title}>
-      <h1 class={`t-hero ${styles.headline}`} data-print-title>{hero.headline}</h1>
-      <script is:inline set:html={PRINT_TITLE} />
-      <p class={`t-body ${styles.sub}`}>{hero.description}</p>
-      <div class={styles.actions}>
-        <ArrowButton href={DOCS_URL} variant="onBrand">Read the docs</ArrowButton>
-        <ArrowButton href={REPO} variant="onBrandGhost">View on GitHub</ArrowButton>
-      </div>
-    </div>
+    <p class={styles.proof}>
+      <strong>1,000,000 of 1,000,000</strong>
+      <span class={styles.ticks} aria-hidden="true">{Array.from({ length: 5 }, () => <i />)}</span>
+      refusals classified in <a href={LOAD_RUN} class="inline-link">v1.0.0's CI load run</a>
+    </p>
+  </div>
+  <div class={styles.cards}>
+    <Capabilities />
+    <RunCard />
+    <ExitCodes />
   </div>
 </section>

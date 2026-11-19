@@ -1,0 +1,80 @@
+---
+import panel from './panel.module.css'
+import s from './Capabilities.module.css'
+
+// Card one: the manifest as switches. A row is a door a run may use; pressing it declares or removes the grant.
+// Spawning a process is not an op at all, so it can never be granted. (The manifest reference lists these doors.)
+const ICON = {
+  read: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  net: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  kv: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>',
+  serve: '<rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/>',
+  spawn: '<path d="m4 17 6-6-6-6"/><path d="M12 19h8"/>',
+}
+const rows = [
+  { key: 'read', label: 'Read ./data', on: true },
+  { key: 'net', label: 'Fetch example.com', on: true },
+  { key: 'kv', label: 'KV store', on: false },
+  { key: 'serve', label: 'Serve on 127.0.0.1', on: false },
+] as const
+---
+
+<div class={`${panel.panel}`} style="--gx: 0%; --gy: 0%;" data-panel>
+  <div class={`float ${s.box}`} data-caps>
+    <p class={s.head}><span class="mono">manifest.json</span><span>Press to grant</span></p>
+    <ul class={s.list}>
+      {
+        rows.map((r) => (
+          <li>
+            <button type="button" class={s.row} aria-pressed={String(r.on)} data-cap>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICON[r.key]} />
+              <span class={s.label}>{r.label}</span>
+              <span class={s.chip} data-chip>{r.on ? 'granted' : 'refused'}</span>
+            </button>
+          </li>
+        ))
+      }
+      <li>
+        <div class={`${s.row} ${s.fixed}`}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICON.spawn} />
+          <span class={s.label}>Spawn a process</span>
+          <span class={s.chip}>no such op</span>
+        </div>
+      </li>
+    </ul>
+    <p class={s.result} aria-live="polite" data-caps-result>2 doors declared. Everything else is a CapabilityError.</p>
+  </div>
+</div>
+
+<script>
+  import { autoplay } from '../../scripts/autoplay'
+  const box = document.querySelector<HTMLElement>('[data-caps]')
+  if (box) {
+    const result = box.querySelector<HTMLElement>('[data-caps-result]')!
+    const buttons = [...box.querySelectorAll<HTMLButtonElement>('[data-cap]')]
+    const sync = () => {
+      const n = buttons.filter((b) => b.getAttribute('aria-pressed') === 'true').length
+      result.textContent =
+        n === 0
+          ? 'No manifest: compute and print, and nothing else.'
+          : `${n} door${n === 1 ? '' : 's'} declared. Everything else is a CapabilityError.`
+    }
+    for (const b of buttons) {
+      b.addEventListener('click', () => {
+        const on = b.getAttribute('aria-pressed') !== 'true'
+        b.setAttribute('aria-pressed', String(on))
+        b.querySelector('[data-chip]')!.textContent = on ? 'granted' : 'refused'
+        sync()
+      })
+    }
+    // On its own: press the next door every 1.8 s, flashing the row it pressed.
+    let next = 0
+    autoplay(box.closest<HTMLElement>('[data-panel]')!, () => {
+      const b = buttons[next]
+      next = (next + 1) % buttons.length
+      b.click()
+      b.dataset.flash = ''
+      setTimeout(() => delete b.dataset.flash, 500)
+    }, 1800)
+  }
+</script>

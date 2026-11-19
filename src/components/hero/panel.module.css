@@ -1,0 +1,12 @@
+/* The three hero panels share a frame: no ground of their own (the maintainer's call), just the card. All three
+   are the same height (the row's tallest), and each card fills its panel. */
+.panel {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+.panel > * {
+  max-width: none !important;
+  flex: 1 1 auto;
+}

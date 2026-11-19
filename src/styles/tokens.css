@@ -1,164 +1,210 @@
-/* Every colour on the site, light first, each with a dark twin designed for it (not inverted).
-   The dark set applies when the system asks for it, unless the visitor chose Light in the header,
-   and always when they chose Dark (data-theme on <html>, set before first paint by Base.astro).
-   scripts/colors.test.mjs fails on any colour written anywhere else, and on a token without its twin. */
+/* Every colour on the site: jsrt's design system (design/theme.css, the maintainer's blue theme in oklch), light
+   first, each with its dark twin from the same file. The dark set applies when the system asks for it, unless the
+   visitor chose Light in the header, and always when they chose Dark (data-theme on <html>, set before first paint
+   by Base.astro). scripts/colors.test.mjs fails on any colour written anywhere else, and on a token without its
+   twin. */
 
 :root {
   color-scheme: light;
 
-  /* Page and type: black is primary, white secondary, greys neutral tints between them. */
-  --c-bg: #ffffff;
-  --c-surface: #f2f2f2;
-  --c-raised: #fafafa;
-  --c-raised-hover: #f4f4f4;
-  --c-ink: #000000;
-  --c-prose: #2b2b2b;
-  --c-text: #5e5e5e;
-  --c-muted: #8c8c8c;
-  --c-faint: #e5e5e5;
-  --c-line: #dedede;
-  --c-dash: #d4d4d4;
-  --c-underline: #bdbdbd;
-  --c-accent: #000000;
-  /* text and marks drawn on an ink-filled shape (the primary button) */
-  --c-on-ink: #ffffff;
-  --c-focus: #2f64e8;
+  /* Page and type, from the jsrt theme (design/theme.css, blue): background, foreground, muted, border. */
+  --c-bg: oklch(1 0 0);
+  --c-surface: oklch(0.9846 0.0017 247.8389);
+  --c-raised: oklch(1 0 0);
+  --c-raised-hover: oklch(0.9846 0.0017 247.8389);
+  --c-ink: oklch(0.3211 0 0);
+  --c-prose: oklch(0.3211 0 0);
+  --c-text: oklch(0.5471 0.0321 263.2921);
+  --c-muted: oklch(0.5471 0.0321 263.2921);
+  --c-faint: oklch(0.9846 0.0017 247.8389);
+  --c-line: oklch(0.9271 0.0075 260.7315);
+  --c-dash: oklch(0.9271 0.0075 260.7315);
+  --c-underline: oklch(0.9271 0.0075 260.7315);
 
-  /* Raised icon tiles and the quiet cards they sit on */
-  --c-tile-top: #f6f6f6;
-  --c-tile-bottom: #efefef;
-  --c-tile-ink: #0a0a0a;
-  --c-tile-drop: rgba(0, 0, 0, 0.06);
-  --c-tile-spread: rgba(0, 0, 0, 0.07);
-  --c-tile-highlight: rgba(255, 255, 255, 0.9);
-  --c-card-edge: rgba(0, 0, 0, 0.012);
-  --c-card-edge-hover: rgba(0, 0, 0, 0.05);
+  /* Accent ink (the theme's accent-foreground): badges, links and small marks. */
+  --c-accent: oklch(0.3742 0.1844 263.9420);
 
-  /* Status chips on the What-it-is cards: tone (dot), ring, tint (chip fill) and the chip's text */
-  --c-chip-ink: #1f1f1f;
-  --c-blue: #2f64e8;
-  --c-blue-ring: #c9d8fb;
-  --c-blue-tint: #eef2fc;
-  --c-blue-soft: #7d9ff0;
-  --c-green: #3fb24f;
-  --c-green-ring: #d0eed4;
-  --c-green-tint: #edf7ee;
-  --c-pink: #e04a8f;
-  --c-pink-ring: #f7cfe1;
-  --c-pink-tint: #fcedf3;
-  --c-pink-soft: #ee8cb9;
+  /* The primary: the theme's blue, for rings, icons and marks. Filled buttons use the next step of its own chart
+     ramp (chart-2): white on the primary is 3.71:1, under AA for button text; on chart-2 it is 5.25:1. */
+  --c-primary: oklch(0.6225 0.2041 259.9027);
+  --c-button: oklch(0.5469 0.2507 262.8085);
+  --c-primary-hover: oklch(0.6225 0.2041 259.9027);
+  --c-on-primary: oklch(1 0 0);
 
-  /* The draft stamp on unpublished posts */
-  --c-draft-bg: #fff4d6;
-  --c-draft-ink: #6b4e00;
-  /* Pixel-art illustrations in the closing statement: one small palette with a 1-cell outline */
-  --c-px-outline: #14161c;
-  --c-px-blue: #0061ff;
-  --c-px-orange: #ff8a3d;
-  --c-px-green: #3fbf6b;
-  --c-px-pink: #ff7eb6;
-  --c-px-cream: #fff1d0;
-  /* The brand block (the hero and the CTA): white at the top to #0061ff at the bottom, the same in both
-     themes, with navy type, a navy button and quiet navy icons; a hairline edge where the page is white. */
-  --c-brand-top: #ffffff;
-  --c-brand-bottom: #0061ff;
-  --c-on-brand: #08142b;
-  --c-brand-button: #08142b;
-  --c-brand-button-text: #ffffff;
-  --c-brand-edge: rgba(8, 20, 43, 0.12);
-  --c-brand-icon: rgba(8, 40, 120, 0.5);
+  /* Secondary buttons, and the accent ground outline buttons and chips take on. */
+  --c-secondary: oklch(0.9665 0.0045 258.3247);
+  --c-on-secondary: oklch(0.4419 0.0375 257.2811);
+  --c-accent-bg: oklch(0.9510 0.0267 237.5723);
 
+  /* Focus: the theme's ring (3.71:1 on white, above the 3:1 a focus mark needs). */
+  --c-focus: oklch(0.6225 0.2041 259.9027);
+  --c-focus-ring: oklch(0.6225 0.2041 259.9027 / 0.3);
+  --c-switch-bg: oklch(0.9846 0.0017 247.8389);
 
+  /* Icon tiles: the accent ground with accent ink. */
+  --c-tile-top: oklch(0.9510 0.0267 237.5723);
+  --c-tile-bottom: oklch(0.9510 0.0267 237.5723);
+  --c-tile-ink: oklch(0.3742 0.1844 263.9420);
+  --c-tile-drop: hsl(0 0% 0% / 0.05);
+  --c-tile-spread: hsl(0 0% 0% / 0.05);
+  --c-tile-highlight: hsl(0 0% 100% / 0);
 
+  /* Cards: the border, turning blue on hover. */
+  --c-card-edge: oklch(0.9271 0.0075 260.7315);
+  --c-card-edge-hover: oklch(0.6225 0.2041 259.9027 / 0.55);
 
-  /* The footer's oversized wordmark: a faint tone on the footer panel */
-  --c-wordmark: #e3e3e3;
+  /* Status chips: three tones from the theme's chart ramp. */
+  --c-chip-ink: oklch(0.3211 0 0);
+  --c-tone-a: oklch(0.6225 0.2041 259.9027);
+  --c-tone-a-ring: oklch(0.6225 0.2041 259.9027 / 0.3);
+  --c-tone-a-tint: oklch(0.9510 0.0267 237.5723);
+  --c-tone-a-soft: oklch(0.5469 0.2507 262.8085);
+  --c-tone-b: oklch(0.4902 0.2693 263.7106);
+  --c-tone-b-ring: oklch(0.4902 0.2693 263.7106 / 0.25);
+  --c-tone-b-tint: oklch(0.9665 0.0045 258.3247);
+  --c-tone-c: oklch(0.3742 0.1844 263.9420);
+  --c-tone-c-ring: oklch(0.3742 0.1844 263.9420 / 0.25);
+  --c-tone-c-tint: oklch(0.9665 0.0045 258.3247);
+  --c-tone-c-soft: oklch(0.4234 0.2370 263.9162);
+  --c-hero-bg: oklch(0.9846 0.0017 247.8389);
+  --c-hero-icon: oklch(0.5471 0.0321 263.2921);
 
-  /* Diagrams in posts */
-  --c-figure-fill: #f2f2f2;
-  --c-figure-ink: #000000;
-  --c-figure-text: #5e5e5e;
-  --c-figure-rule: #8c8c8c;
+  /* The page ground (the theme's muted) with white cards on it; dark: the background. */
+  --c-page: oklch(0.9846 0.0017 247.8389);
+  --c-card: oklch(1 0 0);
+  --c-glow-a: oklch(0.9510 0.0267 237.5723);
+  --c-glow-b: oklch(0.6225 0.2041 259.9027 / 0.35);
+  --c-glow-c: oklch(0.5469 0.2507 262.8085 / 0.3);
 
-  /* Theme toggle in the header: its hover ground and focus ring */
-  --c-switch-bg: #f2f2f2;
-  --c-focus-ring: rgba(47, 100, 232, 0.25);
+  /* Refusals and failed endings: the theme's destructive hue, darkened for AA text in light. */
+  --c-danger: oklch(0.5770 0.2150 27.3250);
+  --c-danger-tint: oklch(0.6496 0.2362 26.9032 / 0.1);
+
+  /* Code: keys and strings in the blue ramp, comments in muted ink. */
+  --c-code-key: oklch(0.3742 0.1844 263.9420);
+  --c-code-string: oklch(0.5469 0.2507 262.8085);
+  --c-code-comment: oklch(0.5471 0.0321 263.2921);
+
+  /* The closing panel: the page fading into blue, with a white wordmark and a blue edge. */
+  --c-cta-top: oklch(0.9846 0.0017 247.8389);
+  --c-cta-bottom: oklch(0.6225 0.2041 259.9027 / 0.55);
+  --c-mark-edge: oklch(0.5469 0.2507 262.8085 / 0.5);
+
+  /* Showcase grounds (kept for any panel that wants one). */
+  --c-showcase: oklch(0.2046 0 0);
+  --c-showcase-edge: oklch(0 0 0 / 0);
+  --c-on-showcase: oklch(0.9219 0 0);
+  --c-on-showcase-muted: oklch(0.7155 0 0);
+
+  /* The footer's oversized wordmark: white in both themes. */
+  --c-wordmark: oklch(1 0 0);
+
+  /* Shadows, from the theme. */
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
 }
 
-/* Dark: a warm near-black page (never pure black), surfaces that step up in lightness instead of
-   using shadows, an off-white ink, and every grey re-measured for AA on the surface it sits on. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --c-bg: #121211;
-    --c-surface: #1d1d1b;
-    --c-raised: #181817;
-    --c-raised-hover: #1e1e1c;
-    --c-ink: #f2f1ec;
-    --c-prose: #d9d7d0;
-    --c-text: #aeaca5;
-    --c-muted: #8d8b85;
-    --c-faint: #2a2a27;
-    --c-line: #2f2f2c;
-    --c-dash: #3c3c38;
-    --c-underline: #5c5b56;
-    --c-accent: #f2f1ec;
-    --c-on-ink: #121211;
-    --c-focus: #8eadf7;
+    /* Page and type, from the jsrt theme (design/theme.css, blue): background, foreground, muted, border. */
+    --c-bg: oklch(0.2046 0 0);
+    --c-surface: oklch(0.2393 0 0);
+    --c-raised: oklch(0.2686 0 0);
+    --c-raised-hover: oklch(0.2686 0 0);
+    --c-ink: oklch(0.9219 0 0);
+    --c-prose: oklch(0.9219 0 0);
+    --c-text: oklch(0.7155 0 0);
+    --c-muted: oklch(0.7155 0 0);
+    --c-faint: oklch(0.2393 0 0);
+    --c-line: oklch(0.3715 0 0);
+    --c-dash: oklch(0.3715 0 0);
+    --c-underline: oklch(0.3715 0 0);
 
-    --c-tile-top: #272725;
-    --c-tile-bottom: #20201e;
-    --c-tile-ink: #ebe9e3;
-    --c-tile-drop: rgba(0, 0, 0, 0.5);
-    --c-tile-spread: rgba(0, 0, 0, 0.4);
-    --c-tile-highlight: rgba(255, 255, 255, 0.07);
-    --c-card-edge: rgba(255, 255, 255, 0.04);
-    --c-card-edge-hover: rgba(255, 255, 255, 0.09);
+    /* Accent ink (the theme's accent-foreground): badges, links and small marks. */
+    --c-accent: oklch(0.8820 0.0588 253.9688);
 
-    --c-chip-ink: #ebe9e3;
-    --c-blue: #7d9ff0;
-    --c-blue-ring: #24345c;
-    --c-blue-tint: #1a2136;
-    --c-blue-soft: #5b78bd;
-    --c-green: #62c46f;
-    --c-green-ring: #1f3a25;
-    --c-green-tint: #17251a;
-    --c-pink: #ee7fb2;
-    --c-pink-ring: #4a2236;
-    --c-pink-tint: #2a1820;
-    --c-pink-soft: #b86a8f;
+    /* The primary: the theme's blue, for rings, icons and marks. Filled buttons use the next step of its own chart
+     ramp (chart-2): white on the primary is 3.71:1, under AA for button text; on chart-2 it is 5.25:1. */
+    --c-primary: oklch(0.6225 0.2041 259.9027);
+    --c-button: oklch(0.5469 0.2507 262.8085);
+    --c-primary-hover: oklch(0.6225 0.2041 259.9027);
+    --c-on-primary: oklch(1 0 0);
 
-    --c-draft-bg: #3a2f12;
-    --c-draft-ink: #f0d58c;
-    --c-px-outline: #e9e7e1;
-    --c-px-blue: #4d8dff;
-    --c-px-orange: #ff9a55;
-    --c-px-green: #55cf7f;
-    --c-px-pink: #ff8fc0;
-    --c-px-cream: #2b2924;
-    /* The brand block (the hero and the CTA): white at the top to #0061ff at the bottom, the same in both
-       themes, with navy type, a navy button and quiet navy icons; a hairline edge where the page is white. */
-    --c-brand-top: #ffffff;
-    --c-brand-bottom: #0061ff;
-    --c-on-brand: #08142b;
-    --c-brand-button: #08142b;
-    --c-brand-button-text: #ffffff;
-    --c-brand-edge: rgba(255, 255, 255, 0.1);
-    --c-brand-icon: rgba(8, 40, 120, 0.5);
+    /* Secondary buttons, and the accent ground outline buttons and chips take on. */
+    --c-secondary: oklch(0.2686 0 0);
+    --c-on-secondary: oklch(0.9219 0 0);
+    --c-accent-bg: oklch(0.6225 0.2041 259.9027 / 0.16);
 
+    /* Focus: the theme's ring (3.71:1 on white, above the 3:1 a focus mark needs). */
+    --c-focus: oklch(0.6225 0.2041 259.9027);
+    --c-focus-ring: oklch(0.6225 0.2041 259.9027 / 0.35);
+    --c-switch-bg: oklch(0.2393 0 0);
 
+    /* Icon tiles: the accent ground with accent ink. */
+    --c-tile-top: oklch(0.6225 0.2041 259.9027 / 0.18);
+    --c-tile-bottom: oklch(0.6225 0.2041 259.9027 / 0.18);
+    --c-tile-ink: oklch(0.8820 0.0588 253.9688);
+    --c-tile-drop: hsl(0 0% 0% / 0.3);
+    --c-tile-spread: hsl(0 0% 0% / 0.25);
+    --c-tile-highlight: hsl(0 0% 100% / 0);
 
+    /* Cards: the border, turning blue on hover. */
+    --c-card-edge: oklch(0.3715 0 0);
+    --c-card-edge-hover: oklch(0.6225 0.2041 259.9027 / 0.6);
 
-    --c-wordmark: #262624;
+    /* Status chips: three tones from the theme's chart ramp. */
+    --c-chip-ink: oklch(0.9219 0 0);
+    --c-tone-a: oklch(0.7122 0.1526 254.9868);
+    --c-tone-a-ring: oklch(0.7122 0.1526 254.9868 / 0.3);
+    --c-tone-a-tint: oklch(0.7122 0.1526 254.9868 / 0.12);
+    --c-tone-a-soft: oklch(0.6225 0.2041 259.9027);
+    --c-tone-b: oklch(0.5739 0.2334 262.7735);
+    --c-tone-b-ring: oklch(0.5739 0.2334 262.7735 / 0.3);
+    --c-tone-b-tint: oklch(0.5739 0.2334 262.7735 / 0.14);
+    --c-tone-c: oklch(0.6225 0.2041 259.9027);
+    --c-tone-c-ring: oklch(0.6225 0.2041 259.9027 / 0.35);
+    --c-tone-c-tint: oklch(0.6225 0.2041 259.9027 / 0.14);
+    --c-tone-c-soft: oklch(0.5739 0.2334 262.7735);
+    --c-hero-bg: oklch(0.2393 0 0);
+    --c-hero-icon: oklch(0.7155 0 0);
 
-    --c-figure-fill: #1d1d1b;
-    --c-figure-ink: #f2f1ec;
-    --c-figure-text: #aeaca5;
-    --c-figure-rule: #77756f;
+    /* The page ground (the theme's muted) with white cards on it; dark: the background. */
+    --c-page: oklch(0.2046 0 0);
+    --c-card: oklch(0.2686 0 0);
+    --c-glow-a: oklch(0.2686 0 0);
+    --c-glow-b: oklch(0.3742 0.1844 263.9420 / 0.55);
+    --c-glow-c: oklch(0.6225 0.2041 259.9027 / 0.28);
 
-    --c-switch-bg: #1d1d1b;
-    --c-focus-ring: rgba(142, 173, 247, 0.3);
+    /* Refusals and failed endings: the theme's destructive hue, darkened for AA text in light. */
+    --c-danger: oklch(0.7040 0.1910 22.2160);
+    --c-danger-tint: oklch(0.6496 0.2362 26.9032 / 0.18);
+
+    /* Code: keys and strings in the blue ramp, comments in muted ink. */
+    --c-code-key: oklch(0.8820 0.0588 253.9688);
+    --c-code-string: oklch(0.7122 0.1526 254.9868);
+    --c-code-comment: oklch(0.7155 0 0);
+
+    /* The closing panel: the page fading into blue, with a white wordmark and a blue edge. */
+    --c-cta-top: oklch(0.2046 0 0);
+    --c-cta-bottom: oklch(0.3742 0.1844 263.9420 / 0.75);
+    --c-mark-edge: oklch(0 0 0 / 0.4);
+
+    /* Showcase grounds (kept for any panel that wants one). */
+    --c-showcase: oklch(0.1684 0 0);
+    --c-showcase-edge: oklch(0.3715 0 0);
+    --c-on-showcase: oklch(0.9219 0 0);
+    --c-on-showcase-muted: oklch(0.7155 0 0);
+
+    /* The footer's oversized wordmark: white in both themes. */
+    --c-wordmark: oklch(1 0 0);
+
+    /* Shadows, from the theme. */
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
   }
 }
 
@@ -166,72 +212,100 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --c-bg: #121211;
-  --c-surface: #1d1d1b;
-  --c-raised: #181817;
-  --c-raised-hover: #1e1e1c;
-  --c-ink: #f2f1ec;
-  --c-prose: #d9d7d0;
-  --c-text: #aeaca5;
-  --c-muted: #8d8b85;
-  --c-faint: #2a2a27;
-  --c-line: #2f2f2c;
-  --c-dash: #3c3c38;
-  --c-underline: #5c5b56;
-  --c-accent: #f2f1ec;
-  --c-on-ink: #121211;
-  --c-focus: #8eadf7;
+  /* Page and type, from the jsrt theme (design/theme.css, blue): background, foreground, muted, border. */
+  --c-bg: oklch(0.2046 0 0);
+  --c-surface: oklch(0.2393 0 0);
+  --c-raised: oklch(0.2686 0 0);
+  --c-raised-hover: oklch(0.2686 0 0);
+  --c-ink: oklch(0.9219 0 0);
+  --c-prose: oklch(0.9219 0 0);
+  --c-text: oklch(0.7155 0 0);
+  --c-muted: oklch(0.7155 0 0);
+  --c-faint: oklch(0.2393 0 0);
+  --c-line: oklch(0.3715 0 0);
+  --c-dash: oklch(0.3715 0 0);
+  --c-underline: oklch(0.3715 0 0);
 
-  --c-tile-top: #272725;
-  --c-tile-bottom: #20201e;
-  --c-tile-ink: #ebe9e3;
-  --c-tile-drop: rgba(0, 0, 0, 0.5);
-  --c-tile-spread: rgba(0, 0, 0, 0.4);
-  --c-tile-highlight: rgba(255, 255, 255, 0.07);
-  --c-card-edge: rgba(255, 255, 255, 0.04);
-  --c-card-edge-hover: rgba(255, 255, 255, 0.09);
+  /* Accent ink (the theme's accent-foreground): badges, links and small marks. */
+  --c-accent: oklch(0.8820 0.0588 253.9688);
 
-  --c-chip-ink: #ebe9e3;
-  --c-blue: #7d9ff0;
-  --c-blue-ring: #24345c;
-  --c-blue-tint: #1a2136;
-  --c-blue-soft: #5b78bd;
-  --c-green: #62c46f;
-  --c-green-ring: #1f3a25;
-  --c-green-tint: #17251a;
-  --c-pink: #ee7fb2;
-  --c-pink-ring: #4a2236;
-  --c-pink-tint: #2a1820;
-  --c-pink-soft: #b86a8f;
+  /* The primary: the theme's blue, for rings, icons and marks. Filled buttons use the next step of its own chart
+     ramp (chart-2): white on the primary is 3.71:1, under AA for button text; on chart-2 it is 5.25:1. */
+  --c-primary: oklch(0.6225 0.2041 259.9027);
+  --c-button: oklch(0.5469 0.2507 262.8085);
+  --c-primary-hover: oklch(0.6225 0.2041 259.9027);
+  --c-on-primary: oklch(1 0 0);
 
-  --c-draft-bg: #3a2f12;
-  --c-draft-ink: #f0d58c;
-  --c-px-outline: #e9e7e1;
-  --c-px-blue: #4d8dff;
-  --c-px-orange: #ff9a55;
-  --c-px-green: #55cf7f;
-  --c-px-pink: #ff8fc0;
-  --c-px-cream: #2b2924;
-  /* The brand block (the hero and the CTA): white at the top to #0061ff at the bottom, the same in both
-     themes, with navy type, a navy button and quiet navy icons; a hairline edge where the page is white. */
-  --c-brand-top: #ffffff;
-  --c-brand-bottom: #0061ff;
-  --c-on-brand: #08142b;
-  --c-brand-button: #08142b;
-  --c-brand-button-text: #ffffff;
-  --c-brand-edge: rgba(255, 255, 255, 0.1);
-  --c-brand-icon: rgba(8, 40, 120, 0.5);
+  /* Secondary buttons, and the accent ground outline buttons and chips take on. */
+  --c-secondary: oklch(0.2686 0 0);
+  --c-on-secondary: oklch(0.9219 0 0);
+  --c-accent-bg: oklch(0.6225 0.2041 259.9027 / 0.16);
 
+  /* Focus: the theme's ring (3.71:1 on white, above the 3:1 a focus mark needs). */
+  --c-focus: oklch(0.6225 0.2041 259.9027);
+  --c-focus-ring: oklch(0.6225 0.2041 259.9027 / 0.35);
+  --c-switch-bg: oklch(0.2393 0 0);
 
+  /* Icon tiles: the accent ground with accent ink. */
+  --c-tile-top: oklch(0.6225 0.2041 259.9027 / 0.18);
+  --c-tile-bottom: oklch(0.6225 0.2041 259.9027 / 0.18);
+  --c-tile-ink: oklch(0.8820 0.0588 253.9688);
+  --c-tile-drop: hsl(0 0% 0% / 0.3);
+  --c-tile-spread: hsl(0 0% 0% / 0.25);
+  --c-tile-highlight: hsl(0 0% 100% / 0);
 
+  /* Cards: the border, turning blue on hover. */
+  --c-card-edge: oklch(0.3715 0 0);
+  --c-card-edge-hover: oklch(0.6225 0.2041 259.9027 / 0.6);
 
-  --c-wordmark: #262624;
+  /* Status chips: three tones from the theme's chart ramp. */
+  --c-chip-ink: oklch(0.9219 0 0);
+  --c-tone-a: oklch(0.7122 0.1526 254.9868);
+  --c-tone-a-ring: oklch(0.7122 0.1526 254.9868 / 0.3);
+  --c-tone-a-tint: oklch(0.7122 0.1526 254.9868 / 0.12);
+  --c-tone-a-soft: oklch(0.6225 0.2041 259.9027);
+  --c-tone-b: oklch(0.5739 0.2334 262.7735);
+  --c-tone-b-ring: oklch(0.5739 0.2334 262.7735 / 0.3);
+  --c-tone-b-tint: oklch(0.5739 0.2334 262.7735 / 0.14);
+  --c-tone-c: oklch(0.6225 0.2041 259.9027);
+  --c-tone-c-ring: oklch(0.6225 0.2041 259.9027 / 0.35);
+  --c-tone-c-tint: oklch(0.6225 0.2041 259.9027 / 0.14);
+  --c-tone-c-soft: oklch(0.5739 0.2334 262.7735);
+  --c-hero-bg: oklch(0.2393 0 0);
+  --c-hero-icon: oklch(0.7155 0 0);
 
-  --c-figure-fill: #1d1d1b;
-  --c-figure-ink: #f2f1ec;
-  --c-figure-text: #aeaca5;
-  --c-figure-rule: #77756f;
+  /* The page ground (the theme's muted) with white cards on it; dark: the background. */
+  --c-page: oklch(0.2046 0 0);
+  --c-card: oklch(0.2686 0 0);
+  --c-glow-a: oklch(0.2686 0 0);
+  --c-glow-b: oklch(0.3742 0.1844 263.9420 / 0.55);
+  --c-glow-c: oklch(0.6225 0.2041 259.9027 / 0.28);
 
-  --c-switch-bg: #1d1d1b;
-  --c-focus-ring: rgba(142, 173, 247, 0.3);
+  /* Refusals and failed endings: the theme's destructive hue, darkened for AA text in light. */
+  --c-danger: oklch(0.7040 0.1910 22.2160);
+  --c-danger-tint: oklch(0.6496 0.2362 26.9032 / 0.18);
+
+  /* Code: keys and strings in the blue ramp, comments in muted ink. */
+  --c-code-key: oklch(0.8820 0.0588 253.9688);
+  --c-code-string: oklch(0.7122 0.1526 254.9868);
+  --c-code-comment: oklch(0.7155 0 0);
+
+  /* The closing panel: the page fading into blue, with a white wordmark and a blue edge. */
+  --c-cta-top: oklch(0.2046 0 0);
+  --c-cta-bottom: oklch(0.3742 0.1844 263.9420 / 0.75);
+  --c-mark-edge: oklch(0 0 0 / 0.4);
+
+  /* Showcase grounds (kept for any panel that wants one). */
+  --c-showcase: oklch(0.1684 0 0);
+  --c-showcase-edge: oklch(0.3715 0 0);
+  --c-on-showcase: oklch(0.9219 0 0);
+  --c-on-showcase-muted: oklch(0.7155 0 0);
+
+  /* The footer's oversized wordmark: white in both themes. */
+  --c-wordmark: oklch(1 0 0);
+
+  /* Shadows, from the theme. */
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
 }

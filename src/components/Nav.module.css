@@ -1,71 +1,72 @@
+/* The header, after the reference: the mark and the links on the left, the theme toggle, a GitHub text link and
+   the amber call on the right, a hairline under the bar inside the content column. */
 .wrap {
-  position: sticky;
-  top: 0;
-  z-index: 4;
   width: 100%;
-  height: 72px;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--content-pad);
+  background: var(--c-page);
+  position: relative;
+  z-index: 10;
 }
 .nav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px var(--content-pad) 0;
-  /* a solid ground, no backdrop blur: a blurred sticky header re-blurs the page under it on every frame */
-  background: var(--c-bg);
-}
-.container {
   width: 100%;
   max-width: var(--content-max);
-  height: 52px;
+}
+.container {
+  height: 88px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 48px;
+  border-bottom: 1px solid var(--c-line);
 }
 .logo {
   display: flex;
   align-items: center;
-  padding: 10px 0;
-  margin-right: auto;
+  border-radius: var(--radius-md);
 }
-.logo img {
-  border-radius: 4px;
-  object-fit: cover;
-}
-.menu {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+.logo:focus-visible,
+.link:focus-visible,
+.textLink:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 4px;
 }
 .links {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 36px;
 }
-.link {
-  transition: color 0.3s var(--ease);
+.link,
+.textLink {
+  font-family: var(--font-text);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--c-ink);
+  border-radius: var(--radius-sm);
+  transition: color 0.15s var(--ease);
 }
-.link:hover {
-  color: var(--c-muted);
+@media (hover: hover) {
+  .link:hover,
+  .textLink:hover {
+    color: var(--c-accent);
+  }
 }
-.dot {
-  width: 4px;
-  height: 4px;
-  background: var(--c-ink);
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
-
-/* Theme toggle: a ghost icon button (36px, a ground only on hover), set before the header's button.
-   The sun and moon swap with a turn and a scale. */
 .toggle {
   position: relative;
   width: 36px;
   height: 36px;
-  margin: 0 12px 0 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   color: var(--c-ink);
   transition:
     background-color 0.15s var(--ease),
@@ -73,9 +74,6 @@
 }
 .toggle:hover {
   background: var(--c-switch-bg);
-}
-.toggle:active {
-  transform: scale(0.985);
 }
 .toggle:focus-visible {
   outline: none;
@@ -106,48 +104,45 @@
 :global(:root[data-theme='dark']) .moon {
   transform: rotate(0deg) scale(1);
 }
-
+@media (prefers-reduced-motion: reduce) {
+  .icon {
+    transition: none;
+  }
+}
 .burger,
 .mobileMenu {
   display: none;
 }
-
-@media (max-width: 809px) {
-  .wrap {
-    position: fixed;
-    left: 0;
-    right: 0;
-  }
-  .nav {
-    padding: 16px var(--content-pad) 0;
+@media (max-width: 1023px) {
+  .links {
+    gap: 24px;
   }
   .container {
-    height: 32px;
+    gap: 32px;
   }
-  .logo {
-    padding: 0;
-  }
-  .menu {
+}
+@media (max-width: 899px) {
+  .links,
+  .textLink,
+  .cta {
     display: none;
   }
-  .toggle {
-    width: 32px;
-    height: 32px;
-    margin: 0 8px 0 0;
+  .container {
+    height: 64px;
   }
   .burger {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
-    width: 24px;
-    height: 24px;
-    padding: 0 3px;
+    width: 32px;
+    height: 32px;
+    padding: 0 6px;
   }
   .burger span {
     display: block;
     height: 2px;
-    background: var(--c-muted);
+    background: var(--c-ink);
   }
   .mobileMenu {
     width: 100%;
@@ -155,5 +150,6 @@
     flex-direction: column;
     gap: 16px;
     padding: 24px 0;
+    border-bottom: 1px solid var(--c-line);
   }
 }
