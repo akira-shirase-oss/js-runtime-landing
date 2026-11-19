@@ -14,7 +14,7 @@
   flex-direction: column;
   gap: 20px;
   padding: 40px var(--panel-pad) 0;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   background: var(--c-surface);
   overflow: hidden;
 }
@@ -40,7 +40,7 @@
   pointer-events: none;
 }
 .logo {
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   object-fit: cover;
 }
 .social {
@@ -58,7 +58,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   background: var(--c-faint);
   transition: background-color 0.3s var(--ease);
 }
@@ -101,9 +101,10 @@
   gap: 12px;
 }
 .square {
-  width: 4px;
-  height: 4px;
-  background: var(--c-accent);
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--c-primary);
 }
 .link {
   padding-left: 16px;
@@ -124,16 +125,21 @@
   gap: 8px 24px;
   padding-top: 8px;
 }
+/* The oversized "jsrt" in Science Gothic at its heaviest, a faint tone on the panel; decorative (the name is
+   already in the footer). */
 .wordmark {
-  /* ~11.7px cells, the same density as the family's 112-cell word — not stretched to the panel width */
-  width: min(480px, 100%);
-  aspect-ratio: 41 / 21;
+  width: 100%;
   overflow: hidden;
 }
-.wordmarkImg {
+.wordmarkText {
   display: block;
-  width: 100%;
-  height: auto;
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: clamp(96px, 18vw, 220px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--c-wordmark);
+  user-select: none;
 }
 /* links inside the legal and imprint lines: ink and an underline, as in running text elsewhere,
    so they never rely on colour alone */

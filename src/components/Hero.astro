@@ -17,18 +17,13 @@ const ICONS = [
   { name: 'lock', x: 70, y: 91, s: 38, r: 4, paths: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>' },
   { name: 'list-checks', x: 86, y: 82, s: 52, r: -6, phone: { x: 88, y: 94 }, paths: '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>' },
 ]
-// Prints the title once at load, a pixel row at a time and line after line: it counts the title's lines
-// (before the first paint, so nothing flashes), then arms the shared `print` animation (global.css). The text
-// stays real text throughout; without this script, or with reduced motion, it is simply there.
-const PRINT_TITLE =
-  "var h=document.querySelector('[data-print-title]');if(h&&!matchMedia('(prefers-reduced-motion: reduce)').matches){var s=getComputedStyle(h),n=Math.max(1,Math.round(h.offsetHeight/parseFloat(s.lineHeight)));h.style.setProperty('--print-lines',n);h.style.setProperty('--print-steps',n*parseInt(s.getPropertyValue('--print-rows')||'29'));h.dataset.print='go'}"
 const place = (i: (typeof ICONS)[number]) =>
   `--x: ${i.x}%; --y: ${i.y}%; --s: ${i.s}px; --r: ${i.r}deg;` +
   (i.phone ? ` --px-x: ${i.phone.x}%; --px-y: ${i.phone.y}%;` : '')
 ---
 
 <section class={styles.hero}>
-  <div class={`brand-block ${styles.card}`}>
+  <div class={`hero-panel ${styles.card}`}>
     <div class={styles.field} aria-hidden="true" data-hero-field>
       {
         ICONS.map((i) => (
@@ -48,12 +43,11 @@ const place = (i: (typeof ICONS)[number]) =>
       }
     </div>
     <div class={styles.title}>
-      <h1 class={`t-hero ${styles.headline}`} data-print-title>{hero.headline}</h1>
-      <script is:inline set:html={PRINT_TITLE} />
+      <h1 class={`t-hero ${styles.headline}`}>{hero.headline}</h1>
       <p class={`t-body ${styles.sub}`}>{hero.description}</p>
       <div class={styles.actions}>
-        <ArrowButton href={DOCS_URL} variant="onBrand">Read the docs</ArrowButton>
-        <ArrowButton href={REPO} variant="onBrandGhost">View on GitHub</ArrowButton>
+        <ArrowButton href={DOCS_URL} variant="primary">Read the docs</ArrowButton>
+        <ArrowButton href={REPO} variant="outline">View on GitHub</ArrowButton>
       </div>
     </div>
   </div>

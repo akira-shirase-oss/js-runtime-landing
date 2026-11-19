@@ -13,14 +13,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   overflow: clip;
   isolation: isolate;
 }
 
-/* The icon field: quiet marks around the edges, navy at low opacity so they read on the white top and the blue
-   bottom alike, never in the clear zone around the words. They stand still: no loop, no pointer tracking, so an
-   idle page paints nothing. Hovering one turns and brightens it, in CSS (transform and opacity, 150ms). */
+/* The icon field: quiet marks around the edges in muted ink, never in the clear zone around the words. They stand still: no loop, no pointer tracking, so an
+   idle page paints nothing. Hovering one turns it amber and brightens it, in CSS (transform, colour and opacity, 150ms). */
 .field {
   position: absolute;
   inset: 0;
@@ -34,10 +33,12 @@
   width: var(--s);
   height: var(--s);
   margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
-  color: var(--c-brand-icon);
-  opacity: 0.5;
+  color: var(--c-hero-icon);
+  opacity: 0.35;
   transform: rotate(var(--r));
-  transition: opacity 0.15s var(--ease);
+  transition:
+    opacity 0.15s var(--ease),
+    color 0.15s var(--ease);
 }
 .mark svg {
   display: block;
@@ -48,6 +49,7 @@
 @media (hover: hover) {
   .mark:hover {
     opacity: 1;
+    color: var(--c-primary);
   }
   .mark:hover svg {
     transform: rotate(10deg) scale(1.06);
@@ -75,9 +77,9 @@
   max-width: 100%;
 }
 .headline {
-  color: var(--c-on-brand);
+  color: var(--c-ink);
 }
-/* The two calls: the docs pill, then the quieter hairline GitHub button beside it. */
+/* The two calls: the amber docs button, then the outline GitHub button beside it. */
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -90,7 +92,7 @@
   max-width: 60ch;
   font-size: clamp(17px, 15.9px + 0.4vw, 20px);
   line-height: 1.5;
-  color: var(--c-on-brand);
+  color: var(--c-text);
 }
 
 @media (max-width: 1199px) {
@@ -117,12 +119,12 @@
 
 @media (max-width: 1199px) {
   .title h1 {
-    font-size: 52.63px;
+    font-size: 46px;
   }
 }
 @media (max-width: 809px) {
   .title h1 {
-    font-size: 39.47px;
+    font-size: 34px;
   }
   .title {
     max-width: 100%;

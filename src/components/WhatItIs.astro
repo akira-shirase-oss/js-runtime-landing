@@ -3,7 +3,7 @@ import SectionHeading from './ui/SectionHeading.astro'
 import styles from './WhatItIs.module.css'
 
 // strong dots carry a ring, soft ones are lighter and smaller
-type Tone = 'blue' | 'green' | 'pink' | 'blueSoft' | 'pinkSoft'
+type Tone = 'toneA' | 'toneB' | 'toneC' | 'toneASoft' | 'toneCSoft'
 
 // Every claim here is in the product's docs today (concepts, the manifest and CLI references, supervise).
 const cards: { title: string; lines: [string, string]; tag: string; tone: Tone; icon: string }[] = [
@@ -11,28 +11,28 @@ const cards: { title: string; lines: [string, string]; tag: string; tone: Tone; 
     title: 'Deny by default',
     lines: ['A script can only do what its manifest declares.', 'No manifest: compute and print, and nothing else.'],
     tag: 'Capabilities',
-    tone: 'blue',
+    tone: 'toneA',
     icon: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
   },
   {
     title: 'Every ending classified',
     lines: ['A timeout, a thrown error and a refusal are different things.', 'Each has its own HostError class and its own exit code.'],
     tag: 'Honest errors',
-    tone: 'green',
+    tone: 'toneB',
     icon: '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
   },
   {
     title: 'A real process boundary',
     lines: ['jsrt supervise wraps the worker in CPU, RSS, wall-clock and output budgets.', 'Secrets are redacted and terminal escapes neutralised on forwarded output.'],
     tag: 'Supervision',
-    tone: 'pink',
+    tone: 'toneC',
     icon: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/>',
   },
   {
     title: 'The engine is borrowed',
     lines: ['V8 executes the script through deno_core, the crate Deno builds on.', 'The Rust host owns the grants, the lifecycle and the error classes.'],
     tag: 'V8 inside',
-    tone: 'blueSoft',
+    tone: 'toneASoft',
     icon: '<path d="m4 17 6-6-6-6"/><path d="M12 19h8"/>',
   },
 ]

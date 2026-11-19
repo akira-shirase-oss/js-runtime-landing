@@ -25,9 +25,9 @@
   flex-direction: column;
   align-items: flex-start;
   padding: 36px;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   background: var(--c-raised);
-  box-shadow: inset 0 0 0 1px var(--c-card-edge);
+  box-shadow: inset 0 0 0 1px var(--c-card-edge), var(--shadow-xs);
   transition:
     background-color 0.15s var(--ease),
     box-shadow 0.15s var(--ease),
@@ -48,7 +48,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   background: linear-gradient(180deg, var(--c-tile-top) 0%, var(--c-tile-bottom) 100%);
   color: var(--c-tile-ink);
   box-shadow:
@@ -79,7 +79,7 @@
   gap: 8px;
   height: 40px;
   padding: 0 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   font-family: var(--font-text);
   font-size: 14px;
   line-height: 1;
@@ -94,35 +94,35 @@
   background: var(--tone);
   box-shadow: 0 0 0 var(--ring-w, 3px) var(--ring);
 }
-.blue {
-  --tone: var(--c-blue);
-  --ring: var(--c-blue-ring);
-  --tint: var(--c-blue-tint);
+.toneA {
+  --tone: var(--c-tone-a);
+  --ring: var(--c-tone-a-ring);
+  --tint: var(--c-tone-a-tint);
 }
-.green {
-  --tone: var(--c-green);
-  --ring: var(--c-green-ring);
-  --tint: var(--c-green-tint);
+.toneB {
+  --tone: var(--c-tone-b);
+  --ring: var(--c-tone-b-ring);
+  --tint: var(--c-tone-b-tint);
 }
-.pink {
-  --tone: var(--c-pink);
-  --ring: var(--c-pink-ring);
-  --tint: var(--c-pink-tint);
+.toneC {
+  --tone: var(--c-tone-c);
+  --ring: var(--c-tone-c-ring);
+  --tint: var(--c-tone-c-tint);
 }
 /* soft variants: a lighter, smaller dot with no ring */
-.blueSoft {
-  --tone: var(--c-blue-soft);
+.toneASoft {
+  --tone: var(--c-tone-a-soft);
   --ring: transparent;
   --ring-w: 0px;
   --dot: 8px;
-  --tint: var(--c-blue-tint);
+  --tint: var(--c-tone-a-tint);
 }
-.pinkSoft {
-  --tone: var(--c-pink-soft);
+.toneCSoft {
+  --tone: var(--c-tone-c-soft);
   --ring: transparent;
   --ring-w: 0px;
   --dot: 8px;
-  --tint: var(--c-pink-tint);
+  --tint: var(--c-tone-c-tint);
 }
 
 /* ---------- Motion ---------- */
@@ -131,7 +131,7 @@
 @media (hover: hover) {
   .card:hover {
     background: var(--c-raised-hover);
-    box-shadow: inset 0 0 0 1px var(--c-card-edge-hover);
+    box-shadow: inset 0 0 0 1px var(--c-card-edge-hover), var(--shadow-sm);
   }
 }
 
@@ -172,7 +172,7 @@
   }
   .card {
     padding: 24px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
   }
   .icon {
     width: 46px;

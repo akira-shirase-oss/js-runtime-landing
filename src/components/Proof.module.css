@@ -29,9 +29,9 @@
   flex-direction: column;
   align-items: flex-start;
   padding: 36px;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   background: var(--c-raised);
-  box-shadow: inset 0 0 0 1px var(--c-card-edge);
+  box-shadow: inset 0 0 0 1px var(--c-card-edge), var(--shadow-xs);
   transition:
     background-color 0.15s var(--ease),
     box-shadow 0.15s var(--ease),
@@ -39,14 +39,15 @@
     opacity 0.4s var(--ease);
 }
 
-/* The number in Geist Pixel: whole cells (39.47px is 1.5px a cell) */
+/* The number in Science Gothic, tabular so the figures line up */
 .number {
   font-family: var(--font-title);
-  font-size: 39.47px;
+  font-size: 38px;
   line-height: 1.1;
-  font-weight: 400;
+  font-weight: 650;
   font-synthesis: none;
-  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
   color: var(--c-ink);
 }
 .unit {
@@ -77,7 +78,7 @@
   align-items: center;
   gap: 20px;
   padding: 32px 36px;
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   background: var(--c-surface);
 }
 .contractTitle {
@@ -96,7 +97,7 @@
   gap: 8px;
   height: 36px;
   padding: 0 14px;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   background: var(--c-bg);
   box-shadow: inset 0 0 0 1px var(--c-line);
   font-family: var(--font-text);
@@ -133,7 +134,7 @@
 @media (hover: hover) {
   .card:hover {
     background: var(--c-raised-hover);
-    box-shadow: inset 0 0 0 1px var(--c-card-edge-hover);
+    box-shadow: inset 0 0 0 1px var(--c-card-edge-hover), var(--shadow-sm);
   }
 }
 :global(html.js) .grid[data-reveal='pending'] .card {
@@ -163,13 +164,13 @@
   }
   .card {
     padding: 24px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
   }
   .number {
-    font-size: 32.9px;
+    font-size: 32px;
   }
   .contract {
     padding: 24px;
-    border-radius: 20px;
+    border-radius: var(--radius-xl);
   }
 }
