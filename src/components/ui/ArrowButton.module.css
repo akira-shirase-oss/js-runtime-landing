@@ -20,7 +20,7 @@
     color 0.15s var(--ease);
 }
 .primary {
-  background: var(--c-primary);
+  background: var(--c-button);
   color: var(--c-on-primary);
   box-shadow: var(--shadow-xs);
 }
@@ -36,7 +36,7 @@
 }
 @media (hover: hover) {
   .primary:hover {
-    background: var(--c-primary-hover);
+    background: var(--c-tone-b);
   }
   .secondary:hover,
   .outline:hover {
