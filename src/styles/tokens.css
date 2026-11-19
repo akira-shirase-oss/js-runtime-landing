@@ -1,0 +1,237 @@
+/* Every colour on the site, light first, each with a dark twin designed for it (not inverted).
+   The dark set applies when the system asks for it, unless the visitor chose Light in the header,
+   and always when they chose Dark (data-theme on <html>, set before first paint by Base.astro).
+   scripts/colors.test.mjs fails on any colour written anywhere else, and on a token without its twin. */
+
+:root {
+  color-scheme: light;
+
+  /* Page and type: black is primary, white secondary, greys neutral tints between them. */
+  --c-bg: #ffffff;
+  --c-surface: #f2f2f2;
+  --c-raised: #fafafa;
+  --c-raised-hover: #f4f4f4;
+  --c-ink: #000000;
+  --c-prose: #2b2b2b;
+  --c-text: #5e5e5e;
+  --c-muted: #8c8c8c;
+  --c-faint: #e5e5e5;
+  --c-line: #dedede;
+  --c-dash: #d4d4d4;
+  --c-underline: #bdbdbd;
+  --c-accent: #000000;
+  /* text and marks drawn on an ink-filled shape (the primary button) */
+  --c-on-ink: #ffffff;
+  --c-focus: #2f64e8;
+
+  /* Raised icon tiles and the quiet cards they sit on */
+  --c-tile-top: #f6f6f6;
+  --c-tile-bottom: #efefef;
+  --c-tile-ink: #0a0a0a;
+  --c-tile-drop: rgba(0, 0, 0, 0.06);
+  --c-tile-spread: rgba(0, 0, 0, 0.07);
+  --c-tile-highlight: rgba(255, 255, 255, 0.9);
+  --c-card-edge: rgba(0, 0, 0, 0.012);
+  --c-card-edge-hover: rgba(0, 0, 0, 0.05);
+
+  /* Status chips on the What-it-is cards: tone (dot), ring, tint (chip fill) and the chip's text */
+  --c-chip-ink: #1f1f1f;
+  --c-blue: #2f64e8;
+  --c-blue-ring: #c9d8fb;
+  --c-blue-tint: #eef2fc;
+  --c-blue-soft: #7d9ff0;
+  --c-green: #3fb24f;
+  --c-green-ring: #d0eed4;
+  --c-green-tint: #edf7ee;
+  --c-pink: #e04a8f;
+  --c-pink-ring: #f7cfe1;
+  --c-pink-tint: #fcedf3;
+  --c-pink-soft: #ee8cb9;
+
+  /* The draft stamp on unpublished posts */
+  --c-draft-bg: #fff4d6;
+  --c-draft-ink: #6b4e00;
+  /* Pixel-art illustrations in the closing statement: one small palette with a 1-cell outline */
+  --c-px-outline: #14161c;
+  --c-px-blue: #0061ff;
+  --c-px-orange: #ff8a3d;
+  --c-px-green: #3fbf6b;
+  --c-px-pink: #ff7eb6;
+  --c-px-cream: #fff1d0;
+  /* The brand block (the hero and the CTA): white at the top to #0061ff at the bottom, the same in both
+     themes, with navy type, a navy button and quiet navy icons; a hairline edge where the page is white. */
+  --c-brand-top: #ffffff;
+  --c-brand-bottom: #0061ff;
+  --c-on-brand: #08142b;
+  --c-brand-button: #08142b;
+  --c-brand-button-text: #ffffff;
+  --c-brand-edge: rgba(8, 20, 43, 0.12);
+  --c-brand-icon: rgba(8, 40, 120, 0.5);
+
+
+
+
+  /* The footer's oversized wordmark: a faint tone on the footer panel */
+  --c-wordmark: #e3e3e3;
+
+  /* Diagrams in posts */
+  --c-figure-fill: #f2f2f2;
+  --c-figure-ink: #000000;
+  --c-figure-text: #5e5e5e;
+  --c-figure-rule: #8c8c8c;
+
+  /* Theme toggle in the header: its hover ground and focus ring */
+  --c-switch-bg: #f2f2f2;
+  --c-focus-ring: rgba(47, 100, 232, 0.25);
+}
+
+/* Dark: a warm near-black page (never pure black), surfaces that step up in lightness instead of
+   using shadows, an off-white ink, and every grey re-measured for AA on the surface it sits on. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --c-bg: #121211;
+    --c-surface: #1d1d1b;
+    --c-raised: #181817;
+    --c-raised-hover: #1e1e1c;
+    --c-ink: #f2f1ec;
+    --c-prose: #d9d7d0;
+    --c-text: #aeaca5;
+    --c-muted: #8d8b85;
+    --c-faint: #2a2a27;
+    --c-line: #2f2f2c;
+    --c-dash: #3c3c38;
+    --c-underline: #5c5b56;
+    --c-accent: #f2f1ec;
+    --c-on-ink: #121211;
+    --c-focus: #8eadf7;
+
+    --c-tile-top: #272725;
+    --c-tile-bottom: #20201e;
+    --c-tile-ink: #ebe9e3;
+    --c-tile-drop: rgba(0, 0, 0, 0.5);
+    --c-tile-spread: rgba(0, 0, 0, 0.4);
+    --c-tile-highlight: rgba(255, 255, 255, 0.07);
+    --c-card-edge: rgba(255, 255, 255, 0.04);
+    --c-card-edge-hover: rgba(255, 255, 255, 0.09);
+
+    --c-chip-ink: #ebe9e3;
+    --c-blue: #7d9ff0;
+    --c-blue-ring: #24345c;
+    --c-blue-tint: #1a2136;
+    --c-blue-soft: #5b78bd;
+    --c-green: #62c46f;
+    --c-green-ring: #1f3a25;
+    --c-green-tint: #17251a;
+    --c-pink: #ee7fb2;
+    --c-pink-ring: #4a2236;
+    --c-pink-tint: #2a1820;
+    --c-pink-soft: #b86a8f;
+
+    --c-draft-bg: #3a2f12;
+    --c-draft-ink: #f0d58c;
+    --c-px-outline: #e9e7e1;
+    --c-px-blue: #4d8dff;
+    --c-px-orange: #ff9a55;
+    --c-px-green: #55cf7f;
+    --c-px-pink: #ff8fc0;
+    --c-px-cream: #2b2924;
+    /* The brand block (the hero and the CTA): white at the top to #0061ff at the bottom, the same in both
+       themes, with navy type, a navy button and quiet navy icons; a hairline edge where the page is white. */
+    --c-brand-top: #ffffff;
+    --c-brand-bottom: #0061ff;
+    --c-on-brand: #08142b;
+    --c-brand-button: #08142b;
+    --c-brand-button-text: #ffffff;
+    --c-brand-edge: rgba(255, 255, 255, 0.1);
+    --c-brand-icon: rgba(8, 40, 120, 0.5);
+
+
+
+
+    --c-wordmark: #262624;
+
+    --c-figure-fill: #1d1d1b;
+    --c-figure-ink: #f2f1ec;
+    --c-figure-text: #aeaca5;
+    --c-figure-rule: #77756f;
+
+    --c-switch-bg: #1d1d1b;
+    --c-focus-ring: rgba(142, 173, 247, 0.3);
+  }
+}
+
+/* The same dark set, when the visitor chose Dark. Kept identical to the block above by colors.test.mjs. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --c-bg: #121211;
+  --c-surface: #1d1d1b;
+  --c-raised: #181817;
+  --c-raised-hover: #1e1e1c;
+  --c-ink: #f2f1ec;
+  --c-prose: #d9d7d0;
+  --c-text: #aeaca5;
+  --c-muted: #8d8b85;
+  --c-faint: #2a2a27;
+  --c-line: #2f2f2c;
+  --c-dash: #3c3c38;
+  --c-underline: #5c5b56;
+  --c-accent: #f2f1ec;
+  --c-on-ink: #121211;
+  --c-focus: #8eadf7;
+
+  --c-tile-top: #272725;
+  --c-tile-bottom: #20201e;
+  --c-tile-ink: #ebe9e3;
+  --c-tile-drop: rgba(0, 0, 0, 0.5);
+  --c-tile-spread: rgba(0, 0, 0, 0.4);
+  --c-tile-highlight: rgba(255, 255, 255, 0.07);
+  --c-card-edge: rgba(255, 255, 255, 0.04);
+  --c-card-edge-hover: rgba(255, 255, 255, 0.09);
+
+  --c-chip-ink: #ebe9e3;
+  --c-blue: #7d9ff0;
+  --c-blue-ring: #24345c;
+  --c-blue-tint: #1a2136;
+  --c-blue-soft: #5b78bd;
+  --c-green: #62c46f;
+  --c-green-ring: #1f3a25;
+  --c-green-tint: #17251a;
+  --c-pink: #ee7fb2;
+  --c-pink-ring: #4a2236;
+  --c-pink-tint: #2a1820;
+  --c-pink-soft: #b86a8f;
+
+  --c-draft-bg: #3a2f12;
+  --c-draft-ink: #f0d58c;
+  --c-px-outline: #e9e7e1;
+  --c-px-blue: #4d8dff;
+  --c-px-orange: #ff9a55;
+  --c-px-green: #55cf7f;
+  --c-px-pink: #ff8fc0;
+  --c-px-cream: #2b2924;
+  /* The brand block (the hero and the CTA): white at the top to #0061ff at the bottom, the same in both
+     themes, with navy type, a navy button and quiet navy icons; a hairline edge where the page is white. */
+  --c-brand-top: #ffffff;
+  --c-brand-bottom: #0061ff;
+  --c-on-brand: #08142b;
+  --c-brand-button: #08142b;
+  --c-brand-button-text: #ffffff;
+  --c-brand-edge: rgba(255, 255, 255, 0.1);
+  --c-brand-icon: rgba(8, 40, 120, 0.5);
+
+
+
+
+  --c-wordmark: #262624;
+
+  --c-figure-fill: #1d1d1b;
+  --c-figure-ink: #f2f1ec;
+  --c-figure-text: #aeaca5;
+  --c-figure-rule: #77756f;
+
+  --c-switch-bg: #1d1d1b;
+  --c-focus-ring: rgba(142, 173, 247, 0.3);
+}

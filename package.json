@@ -1,0 +1,27 @@
+{
+  "name": "jsrt-landing",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "oxlint",
+    "test": "node --test scripts/*.test.mjs",
+    "check": "node scripts/check-dist.mjs",
+    "check:browser": "node scripts/check-csp-browser.mjs",
+    "capture": "node scripts/capture.mjs",
+    "og": "node scripts/make-og.mjs"
+  },
+  "dependencies": {
+    "astro": "7.4.12"
+  },
+  "devDependencies": {
+    "opentype.js": "^1.3.4",
+    "oxlint": "^1.90.0",
+    "typescript": "~7.0.2",
+    "wawoff2": "^2.0.1"
+  },
+  "license": "MIT"
+}

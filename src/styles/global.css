@@ -1,0 +1,321 @@
+@import './tokens.css';
+
+/* ---------- Fonts: two families, self-hosted (README "Typography") ----------
+   Geist Pixel names things: the hero, each page's title, the home page's section titles and post titles.
+   Inter sets everything inside them. Each has a local fallback sized to its metrics, so the swap moves nothing. */
+@font-face {
+  font-family: 'Geist Pixel';
+  src: url('/fonts/geist-pixel-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-latin-var.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Geist Pixel Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 108.09%;
+  ascent-override: 92.97%;
+  descent-override: 27.29%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 107.05%;
+  ascent-override: 90.49%;
+  descent-override: 22.53%;
+  line-gap-override: 0%;
+}
+
+/* ---------- Tokens (colours live in tokens.css) ---------- */
+:root {
+  --font-title: 'Geist Pixel', 'Geist Pixel Fallback', sans-serif;
+  --font-text: 'Inter', 'Inter Fallback', sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Printing, like a receipt printer, row by row: the hero's title and the footer's wordmark share it.
+     600ms a printed line; a line of Geist Pixel at line-height 1.1 is 29 pixel rows. */
+  --print-line: 600ms;
+  --print-rows: 29;
+
+  /* One easing curve for every transition; --spring is kept as an alias for older rules */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring: var(--ease);
+  --pad-x: 20px;
+  --section-y: 80px;
+  /* The home page's layout system. Panels (the hero card, the footer) are --panel-max wide, --panel-inset from
+     the window's edge, with --panel-pad inside. Every section's content sits in one column, --content-max wide,
+     with --content-pad at the sides: the panel's inset plus its padding, so section text lines up with the text
+     inside the panels at every width. Consecutive sections are --section-gap apart. */
+  --panel-max: 1380px;
+  --panel-inset: 20px;
+  --panel-pad: 32px;
+  --content-max: 1176px;
+  --content-pad: calc(var(--panel-inset) + var(--panel-pad));
+  --section-gap: clamp(72px, 9vw, 128px);
+}
+/* Breakpoints mirror the source: desktop ≥1200, tablet 810–1199, phone <810 */
+@media (max-width: 1199px) {
+  :root {
+    --section-y: 40px;
+  }
+}
+@media (max-width: 809px) {
+  :root {
+    --pad-x: 16px;
+    /* phones: tighter panels, so cards and text keep their width (content at 24px from the edge) */
+    --panel-inset: 12px;
+    --panel-pad: 12px;
+  }
+}
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+/* Native scrolling only: the wheel and trackpad are never taken over. In-page links glide unless motion is reduced. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+body {
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--font-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+img,
+video {
+  display: block;
+  max-width: none;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+ul {
+  list-style: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-weight: inherit;
+  font-size: inherit;
+}
+/* Geist Pixel draws one 38-unit cell per pixel, so its sizes are whole cells where possible (26.32px is
+   1px a cell): 78.95, 52.63, 39.47, 26.32. It has one weight; never fake a bold. */
+.t-hero,
+.t-h2 {
+  font-synthesis: none;
+  letter-spacing: 0;
+}
+/* The source balances line lengths and enables these OpenType features on its text */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+figcaption {
+  text-wrap: balance;
+  font-feature-settings: 'blwf', 'cv03', 'cv04', 'cv09', 'cv11';
+}
+
+/* ---------- Type presets ---------- */
+.t-hero {
+  font-family: var(--font-title);
+  font-size: 78.95px;
+  line-height: 1.1;
+  font-weight: 400;
+  color: var(--c-on-brand);
+}
+.t-h2 {
+  font-family: var(--font-title);
+  font-size: 52.63px;
+  line-height: 1.1;
+  font-weight: 400;
+  color: var(--c-ink);
+}
+/* the soft second phrase in many headings: the same face, set back in muted grey */
+.t-h2 .soft,
+.soft {
+  font-style: normal;
+  font-weight: inherit;
+  color: var(--c-muted);
+}
+.t-h3 {
+  font-family: var(--font-text);
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+.t-h4 {
+  font-family: var(--font-text);
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+.t-h5 {
+  font-family: var(--font-text);
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 500;
+  color: var(--c-ink);
+}
+.t-badge {
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--c-accent);
+}
+.t-body {
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--c-text);
+}
+.t-body-lg {
+  font-family: var(--font-text);
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--c-text);
+}
+.t-small {
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--c-text);
+}
+.t-label {
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: var(--c-ink);
+}
+.t-tiny {
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--c-text);
+}
+
+@media (max-width: 1199px) {
+  .t-h2 {
+    font-size: 39.47px;
+  }
+}
+@media (max-width: 809px) {
+  .t-h2 {
+    font-size: 32.9px;
+  }
+}
+
+/* Shared section shell on the home page: the content column, with no vertical padding of its own (the page
+   spaces sections with --section-gap) */
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 var(--content-pad);
+}
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+}
+
+/* A link inside running text on the home page: ink and an underline, as on the blog. */
+.inline-link {
+  color: var(--c-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--c-line);
+  text-underline-offset: 3px;
+}
+.inline-link:hover {
+  text-decoration-color: currentColor;
+}
+/* The brand block: the hero card and the CTA card share it, so they can't drift apart. */
+.brand-block {
+  background: linear-gradient(0deg, var(--c-brand-bottom) 0%, var(--c-brand-top) 100%);
+  box-shadow: inset 0 0 0 1px var(--c-brand-edge);
+  color: var(--c-on-brand);
+}
+/* Printed text: the end state (all there) is the default; a script arms it only when motion is allowed. */
+@keyframes print {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-print-title][data-print='go'] {
+    animation: print calc(var(--print-line) * var(--print-lines, 1)) steps(var(--print-steps, 29), end);
+  }
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The theme toggle's view transition: the new theme is revealed by a circle from the button (Nav.astro),
+   so the default cross-fade is off. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,24 @@
+version: 2
+updates:
+  # One grouped PR a week for the lockfile. A new Astro can change the inline scripts' hashes:
+  # npm run check then fails with the new values for public/_headers.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      npm:
+        patterns: ["*"]
+
+  # One grouped PR a week for the SHA-pinned actions in .github/workflows.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
