@@ -14,7 +14,7 @@ const codes = [
 const start = 3
 ---
 
-<div class={`glow ${panel.panel}`} style="--gx: 100%; --gy: 100%;">
+<div class={`glow ${panel.panel}`} style="--gx: 100%; --gy: 100%;" data-panel>
   <div class={`float ${s.box}`} data-exits>
     <p class={s.head}>How did it end?</p>
     <div class={s.list} role="radiogroup" aria-label="Exit codes">
@@ -31,15 +31,13 @@ const start = 3
           >
             <span class={`mono ${s.code}`}>{c.code}</span>
             <span class={s.name}>{c.name}</span>
-            {i === start && (
-              <span class={s.pointer} aria-hidden="true" data-pointer>
-                <svg viewBox="0 0 24 24"><path d="M4 3l7.5 18 2.6-7.4L21.5 11z" /></svg>
-                <span>supervisor</span>
-              </span>
-            )}
           </button>
         ))
       }
+      <span class={s.pointer} aria-hidden="true" data-pointer style={`--row: ${start}`}>
+        <svg viewBox="0 0 24 24"><path d="M4 3l7.5 18 2.6-7.4L21.5 11z" /></svg>
+        <span>supervisor</span>
+      </span>
     </div>
     <p class={s.read} aria-live="polite" data-exit-read>
       <span class="mono">$ echo $?</span>
@@ -50,6 +48,7 @@ const start = 3
 </div>
 
 <script>
+  import { autoplay } from '../../scripts/autoplay'
   const box = document.querySelector<HTMLElement>('[data-exits]')
   if (box) {
     const rows = [...box.querySelectorAll<HTMLButtonElement>('[data-exit]')]
@@ -62,7 +61,7 @@ const start = 3
         r.setAttribute('aria-checked', String(on))
         r.tabIndex = on ? 0 : -1
       }
-      row.append(pointer)
+      pointer.style.setProperty('--row', String(rows.indexOf(row)))
       code.textContent = row.dataset.exit!
       text.textContent = row.dataset.text!
       if (focus) row.focus()
@@ -78,5 +77,10 @@ const start = 3
         pick(rows[(next + rows.length) % rows.length], true)
       })
     }
+    // On its own: the supervisor reads the next ending every 2.2 s.
+    autoplay(box.closest<HTMLElement>('[data-panel]')!, () => {
+      const i = rows.findIndex((r) => r.getAttribute('aria-checked') === 'true')
+      pick(rows[(i + 1) % rows.length])
+    }, 2200)
   }
 </script>

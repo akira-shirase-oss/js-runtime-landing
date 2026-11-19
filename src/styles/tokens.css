@@ -92,6 +92,12 @@
   --c-cta-bottom: oklch(0.8447 0.1675 84.1157 / 0.55);
   --c-mark-edge: oklch(0.7857 0.1716 68.5720 / 0.45);
 
+  /* Showcase panels (the hero's three, why, features): a near-black ground, no gradient; dark: a shade below the page. */
+  --c-showcase: oklch(0.2046 0 0);
+  --c-showcase-edge: oklch(0 0 0 / 0);
+  --c-on-showcase: oklch(0.9219 0 0);
+  --c-on-showcase-muted: oklch(0.7155 0 0);
+
   /* The footer's oversized wordmark: a faint tone on the footer panel. */
   --c-wordmark: oklch(1 0 0);
 
@@ -190,8 +196,14 @@
     --c-cta-bottom: oklch(0.4910 0.1442 43.4774 / 0.6);
     --c-mark-edge: oklch(0 0 0 / 0.4);
 
+    /* Showcase panels (the hero's three, why, features): a near-black ground, no gradient; dark: a shade below the page. */
+    --c-showcase: oklch(0.1684 0 0);
+    --c-showcase-edge: oklch(0.3715 0 0);
+    --c-on-showcase: oklch(0.9219 0 0);
+    --c-on-showcase-muted: oklch(0.7155 0 0);
+
     /* The footer's oversized wordmark: a faint tone on the footer panel. */
-    --c-wordmark: oklch(0.2686 0 0);
+    --c-wordmark: oklch(1 0 0);
 
     /* Shadows, from the theme (one soft drop, stepped). */
     --shadow-xs: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.05);
@@ -289,8 +301,14 @@
   --c-cta-bottom: oklch(0.4910 0.1442 43.4774 / 0.6);
   --c-mark-edge: oklch(0 0 0 / 0.4);
 
+  /* Showcase panels (the hero's three, why, features): a near-black ground, no gradient; dark: a shade below the page. */
+  --c-showcase: oklch(0.1684 0 0);
+  --c-showcase-edge: oklch(0.3715 0 0);
+  --c-on-showcase: oklch(0.9219 0 0);
+  --c-on-showcase-muted: oklch(0.7155 0 0);
+
   /* The footer's oversized wordmark: a faint tone on the footer panel. */
-  --c-wordmark: oklch(0.2686 0 0);
+  --c-wordmark: oklch(1 0 0);
 
   /* Shadows, from the theme (one soft drop, stepped). */
   --shadow-xs: 0px 4px 8px -1px hsl(0 0% 10.1961% / 0.05);

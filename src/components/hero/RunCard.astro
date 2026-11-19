@@ -44,14 +44,18 @@ const events = [
 </div>
 
 <script>
+  import { autoplay } from '../../scripts/autoplay'
   const card = document.querySelector<HTMLElement>('[data-run]')
   const again = card?.querySelector<HTMLButtonElement>('[data-run-again]')
   if (card && again) {
-    again.addEventListener('click', () => {
+    const replay = () => {
       if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
       delete card.dataset.play
       void card.offsetWidth
       card.dataset.play = 'go'
-    })
+    }
+    again.addEventListener('click', replay)
+    // On its own: run it again every 5.5 s.
+    autoplay(card, replay, 5500)
   }
 </script>

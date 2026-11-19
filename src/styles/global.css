@@ -352,12 +352,11 @@ figcaption {
 .lead {
   color: var(--c-ink);
 }
-/* The amber field the showcase panels sit on (static; nothing moves). Each panel can shift the light with --gx/--gy. */
+/* The ground the showcase panels sit on: near-black, flat (no gradient), with the floating cards on top. */
 .glow {
-  background:
-    radial-gradient(90% 80% at var(--gx, 0%) var(--gy, 0%), var(--c-glow-a) 0%, transparent 70%),
-    radial-gradient(80% 90% at calc(100% - var(--gx, 0%)) calc(100% - var(--gy, 0%)), var(--c-glow-c) 0%, transparent 75%),
-    linear-gradient(160deg, var(--c-glow-a) 0%, var(--c-glow-b) 100%);
+  background: var(--c-showcase);
+  box-shadow: inset 0 0 0 1px var(--c-showcase-edge);
+  color: var(--c-on-showcase);
 }
 /* A floating card inside a panel: the card ground, the theme's border and its medium shadow. */
 .float {

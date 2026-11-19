@@ -219,10 +219,10 @@ await visit('/', desktop, async (page, report) => {
   if ((await page.evaluate(() => document.documentElement.dataset.theme)) !== 'light') report('with storage blocked, the toggle did not switch to Light')
 }, 'dark')
 
-// The hero title is real text, in the accessibility tree from the first moment; nothing on the page animates
-// at rest (every animation here is one a visitor started).
+// The hero title is real text, in the accessibility tree from the first moment. With reduced motion nothing on
+// the page animates at rest and the hero panels never start playing on their own.
 {
-  const context = await browser.newContext({ viewport: phone })
+  const context = await browser.newContext({ viewport: phone, reducedMotion: 'reduce' })
   const page = await context.newPage()
   await page.goto(origin + '/', { waitUntil: 'load' })
   const tree = await page.locator('h1').ariaSnapshot()
@@ -230,9 +230,35 @@ await visit('/', desktop, async (page, report) => {
   if (!/Run JavaScript/.test(tree)) problems.push(`/ [hero title]: not in the accessibility tree at load (${tree})`)
   await page.waitForTimeout(600)
   const running = await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').map((a) => a.animationName || a.constructor.name))
-  if (running.length) problems.push(`/ [at rest]: ${running.length} animation(s) running with no input: ${running.slice(0, 3).join(', ')}`)
+  if (running.length) problems.push(`/ [reduced motion, at rest]: ${running.length} animation(s) running with no input: ${running.slice(0, 3).join(', ')}`)
+  const playing = await page.evaluate(() => [...document.querySelectorAll('[data-autoplay="on"]')].length)
+  if (playing) problems.push(`/ [reduced motion]: ${playing} hero panel(s) still play on their own`)
   await context.close()
 }
+
+// The hero panels play on their own (the maintainer's call) and stop on hover: the exit picker advances by
+// itself, holds still while the pointer is over it, and pauses once it is scrolled out of view.
+await visit('/', desktop, async (page, report) => {
+  interactions++
+  const checked = () => page.evaluate(() => document.querySelector('[data-exits] [aria-checked="true"]')?.dataset.exit)
+  const panel = page.locator('[data-exits]').locator('xpath=ancestor::*[@data-panel][1]')
+  await panel.scrollIntoViewIfNeeded()
+  await page.mouse.move(5, 5)
+  await page.waitForTimeout(200)
+  const a = await checked()
+  await page.waitForTimeout(2600)
+  const b = await checked()
+  if (a === b) report(`the exit picker did not advance on its own (stayed at ${a})`)
+  await panel.hover()
+  if ((await panel.getAttribute('data-autoplay')) !== 'paused') report('hovering the exit panel did not pause it')
+  const c = await checked()
+  await page.waitForTimeout(2600)
+  if ((await checked()) !== c) report('the exit picker kept moving under the pointer')
+  await page.mouse.move(5, 5)
+  await page.evaluate(() => document.querySelector('footer').scrollIntoView())
+  await page.waitForTimeout(300)
+  if ((await panel.getAttribute('data-autoplay')) !== 'paused') report('the exit panel kept playing off screen')
+})
 
 // Masks are cheap on an icon and expensive over a large area: no element bigger than 48px may be masked or
 // clipped by an SVG mask (the wordmark draws its gaps in its path instead).
@@ -255,9 +281,10 @@ for (const viewport of [desktop, phone]) {
   })
 }
 
-// The interactions, each proved in a real browser: the manifest switches grant and refuse, the exit picker
-// follows the pointer and the arrow keys, the supervise tabs switch panels, the redaction toggle flips the
-// line, and "Run again" replays the events once (and not at all with reduced motion).
+// The interactions, each proved in a real browser (with reduced motion, so no panel plays underneath): the
+// manifest switches grant and refuse, the exit picker follows the pointer and the arrow keys, the supervise tabs
+// switch panels, the redaction toggle flips the line, and "Run again" replays the events once (and not at all
+// with reduced motion).
 await visit('/', desktop, async (page, report) => {
   interactions++
   const kv = page.locator('[data-cap]', { hasText: 'KV store' })
@@ -275,6 +302,9 @@ await visit('/', desktop, async (page, report) => {
   if (await page.locator('#sv-time').isVisible()) report('the Timeline panel stayed visible after switching tabs')
   await page.locator('[data-peek]').click()
   if ((await page.locator('[data-redact]').getAttribute('data-raw')) !== 'true') report('the redaction toggle did not show the raw line')
+}, 'light', { reducedMotion: 'reduce' })
+await visit('/', desktop, async (page, report) => {
+  interactions++
   await page.locator('[data-run-again]').click()
   if ((await page.locator('[data-run]').getAttribute('data-play')) !== 'go') report('Run again did not replay the events')
 })

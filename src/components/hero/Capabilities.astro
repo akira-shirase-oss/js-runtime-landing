@@ -19,7 +19,7 @@ const rows = [
 ] as const
 ---
 
-<div class={`glow ${panel.panel}`} style="--gx: 0%; --gy: 0%;">
+<div class={`glow ${panel.panel}`} style="--gx: 0%; --gy: 0%;" data-panel>
   <div class={`float ${s.box}`} data-caps>
     <p class={s.head}><span class="mono">manifest.json</span><span>Press to grant</span></p>
     <ul class={s.list}>
@@ -47,6 +47,7 @@ const rows = [
 </div>
 
 <script>
+  import { autoplay } from '../../scripts/autoplay'
   const box = document.querySelector<HTMLElement>('[data-caps]')
   if (box) {
     const result = box.querySelector<HTMLElement>('[data-caps-result]')!
@@ -66,5 +67,14 @@ const rows = [
         sync()
       })
     }
+    // On its own: press the next door every 1.8 s, flashing the row it pressed.
+    let next = 0
+    autoplay(box.closest<HTMLElement>('[data-panel]')!, () => {
+      const b = buttons[next]
+      next = (next + 1) % buttons.length
+      b.click()
+      b.dataset.flash = ''
+      setTimeout(() => delete b.dataset.flash, 500)
+    }, 1800)
   }
 </script>

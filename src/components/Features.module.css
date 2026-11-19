@@ -36,7 +36,13 @@
 }
 .wide {
   grid-column: span 3;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 1px var(--c-showcase-edge);
+}
+.wide .title {
+  color: var(--c-on-showcase-muted);
+}
+.wide .title strong {
+  color: var(--c-on-showcase);
 }
 .title {
   max-width: 30ch;
