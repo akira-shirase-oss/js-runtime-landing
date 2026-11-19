@@ -12,45 +12,31 @@
 }
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 5fr 7fr;
+  gap: 20px;
+  align-items: start;
 }
 .item {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
-.panel {
-  min-height: 560px;
-  border-radius: var(--radius-2xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-}
-.card {
-  width: 100%;
-  max-width: 460px;
+/* the run, accounted for */
+.run {
   padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
   font-family: var(--font-text);
 }
-.cardHead {
+.runHead {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-bottom: 18px;
+  padding-bottom: 20px;
   border-bottom: 1px solid var(--c-line);
   font-size: 15px;
   color: var(--c-ink);
-}
-.cardTitle {
-  font-family: var(--font-title);
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
 }
 .mark {
   width: 18px;
@@ -58,27 +44,8 @@
   border-radius: 5px;
   background: var(--c-primary);
 }
-.facts {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.facts div {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-.facts dt {
-  font-size: 15px;
-  color: var(--c-text);
-}
-.facts dd {
-  font-size: 14px;
-  color: var(--c-ink);
-  text-align: right;
-}
 .ok {
+  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -96,82 +63,153 @@
   border-radius: 50%;
   background: currentColor;
 }
-.sub {
-  padding-top: 18px;
-  border-top: 1px solid var(--c-line);
-  font-size: 14px;
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.facts dt {
+  font-size: 15px;
   color: var(--c-text);
+}
+.facts dd {
+  font-size: 14px;
+  color: var(--c-ink);
+  text-align: right;
 }
 .timeline {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding-left: 14px;
-  border-left: 1px solid var(--c-line);
+  gap: 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-line);
 }
 .timeline li {
+  position: relative;
   display: flex;
   justify-content: space-between;
   gap: 16px;
+  padding: 0 0 18px 22px;
   font-size: 15px;
   color: var(--c-ink);
+}
+.timeline li:last-child {
+  padding-bottom: 0;
+}
+/* a dot per event on a hairline */
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c-primary);
+}
+.timeline li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 6.5px;
+  top: 19px;
+  bottom: 2px;
+  border-left: 1px solid var(--c-line);
 }
 .timeline li :global(.mono) {
   font-size: 13px;
   color: var(--c-text);
 }
-.timeline li:first-child span:last-child {
+.timeline .bad::before {
+  background: var(--c-danger);
+}
+.timeline .bad span:last-child {
   color: var(--c-danger);
 }
+/* the comparison table */
+.tableCard {
+  padding: 8px;
+}
+.scroll {
+  overflow-x: auto;
+  border-radius: var(--radius-xl);
+}
+.scroll:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+}
 .table {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.table li {
-  display: grid;
-  grid-template-columns: 84px 1fr;
-  gap: 12px;
-  align-items: center;
-  min-height: 44px;
-  padding: 8px 12px;
-  border-radius: var(--radius-lg);
+  width: 100%;
+  min-width: 560px;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--font-text);
   font-size: 14px;
-  line-height: 1.35;
   color: var(--c-text);
-  transition: background-color 0.15s var(--ease);
 }
-@media (hover: hover) {
-  .table li:hover {
-    background: var(--c-surface);
-  }
+.table th,
+.table td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--c-line);
 }
-.who {
+.table tbody tr:last-child th,
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table thead th {
+  font-size: 13px;
   font-weight: 600;
   color: var(--c-ink);
 }
-.table li.us {
+.table tbody th {
+  font-weight: 500;
+  color: var(--c-ink);
+  width: 32%;
+}
+.table :global(.mono) {
+  font-size: 12.5px;
+}
+@media (hover: hover) {
+  .table tbody tr:hover th,
+  .table tbody tr:hover td {
+    background: var(--c-surface);
+  }
+}
+/* the jsrt column: a soft amber band, amber heading */
+.table .us {
   background: var(--c-accent-bg);
+  color: var(--c-ink);
+  font-weight: 600;
+}
+.table thead .us {
   color: var(--c-accent);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
-.table li.us .who {
-  color: var(--c-accent);
+.table tbody tr:last-child .us {
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 }
-.note {
-  padding-top: 14px;
-  border-top: 1px solid var(--c-line);
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--c-text);
+@media (hover: hover) {
+  .table tbody tr:hover .us {
+    background: var(--c-accent-bg);
+  }
 }
-.note :global(.mono),
-.caption :global(.mono) {
-  font-size: 0.92em;
+.yes {
+  color: var(--c-ink);
+  font-weight: 600;
+}
+.no {
+  color: var(--c-danger);
+  font-weight: 600;
 }
 .caption {
-  max-width: 54ch;
+  max-width: 60ch;
   font-family: var(--font-text);
   font-size: 18px;
   line-height: 1.5;
@@ -186,16 +224,14 @@
   margin-top: 8px;
   font-size: 13px;
 }
-@media (max-width: 899px) {
+@media (max-width: 999px) {
   .grid {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  .panel {
-    min-height: 0;
-    padding: 32px 16px;
-  }
-  .card {
+}
+@media (max-width: 499px) {
+  .run {
     padding: 22px;
   }
 }

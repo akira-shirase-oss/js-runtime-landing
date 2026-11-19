@@ -28,7 +28,7 @@
   box-shadow: inset 0 0 0 1px var(--c-line);
   overflow: hidden;
 }
-.card:not(.wide) {
+.card {
   background: var(--c-card);
 }
 .grid > .card:nth-child(2) {
@@ -36,13 +36,6 @@
 }
 .wide {
   grid-column: span 3;
-  box-shadow: inset 0 0 0 1px var(--c-showcase-edge);
-}
-.wide .title {
-  color: var(--c-on-showcase-muted);
-}
-.wide .title strong {
-  color: var(--c-on-showcase);
 }
 .title {
   max-width: 30ch;
@@ -245,6 +238,8 @@
   gap: 16px;
   margin: 0 -40px;
   padding: 40px;
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-line);
 }
 .term {
   padding: 20px;
@@ -308,6 +303,7 @@
   height: 64px;
   display: flex;
   align-items: center;
+  gap: 16px;
   margin-left: calc(40px + (4 - var(--i)) * 18px);
   padding: 0 22px;
   border: 1px solid var(--c-line);
@@ -322,11 +318,27 @@
 .ops li:last-child {
   border-bottom: 1px solid var(--c-line);
 }
-@media (hover: hover) {
-  .ops li:hover {
-    translate: -6px 0;
-    color: var(--c-accent);
-  }
+/* the op in focus: nudged out, amber, with what it does beside it */
+.ops li[aria-current='true'] {
+  translate: -6px 0;
+  color: var(--c-accent);
+  box-shadow: inset 3px 0 0 var(--c-primary);
+}
+.opText {
+  font-family: var(--font-text);
+  font-size: 13px;
+  color: var(--c-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+.ops li[aria-current='true'] .opText {
+  opacity: 1;
+}
+.ops li {
+  cursor: default;
 }
 /* V8 → op → grant, three stacked steps with a hairline between */
 .flow {
@@ -445,6 +457,148 @@
 @media (prefers-reduced-motion: reduce) {
   .ops li,
   .tabs button {
+    transition: none;
+  }
+}
+
+/* ---------- the bento's own motion: each card plays (autoplay.ts) and pauses on hover ---------- */
+.lanes {
+  position: relative;
+}
+/* the playhead spans the track column; translating it by 80% of its own width lands on 400 ms of 500 */
+.playhead {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  left: 92px;
+  right: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+.playhead::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-left: 1.5px solid var(--c-primary);
+}
+@keyframes grow {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    scale: 0.7;
+  }
+}
+@keyframes sweep {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(80%);
+  }
+}
+@keyframes type {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wide[data-play='go'] .run {
+    animation: grow 1.6s linear backwards;
+  }
+  .wide[data-play='go'] .kill {
+    animation: appear 0.25s var(--ease) 1.6s backwards;
+  }
+  .wide[data-play='go'] .out {
+    animation: appear 0.25s var(--ease) 2s backwards;
+  }
+  .wide[data-play='go'] .playhead {
+    animation: sweep 1.6s linear forwards;
+  }
+  .term[data-raw='true'] .secret {
+    display: inline-block;
+    animation: type 0.6s steps(7, end) backwards;
+  }
+  .term:not([data-raw='true']) .masked {
+    display: inline-block;
+    animation: appear 0.3s var(--ease) backwards;
+  }
+}
+.which {
+  font-family: var(--font-text);
+  font-size: 12px;
+  color: var(--c-text);
+}
+/* the call travelling down: the step in hand is ringed in amber; the grant check answers ok or refused */
+.flow li {
+  transition:
+    box-shadow 0.2s var(--ease),
+    background-color 0.2s var(--ease);
+}
+.flow[data-step='0'] li:nth-child(1),
+.flow[data-step='1'] li:nth-child(2),
+.flow[data-step='2'] li:nth-child(3),
+.flow[data-step='3'] li:nth-child(3) {
+  box-shadow: inset 0 0 0 1.5px var(--c-primary);
+}
+.flow[data-step='3'][data-verdict='no'] li:nth-child(3) {
+  background: var(--c-danger-tint);
+  box-shadow: inset 0 0 0 1.5px var(--c-danger);
+}
+.verdict {
+  display: grid;
+}
+.verdict > span {
+  grid-area: 1 / 1;
+  transition: opacity 0.2s var(--ease);
+}
+.flow[data-verdict='ok'] [data-no],
+.flow[data-verdict='no'] [data-ok] {
+  opacity: 0;
+}
+.flow[data-verdict='no'] [data-no] {
+  color: var(--c-danger);
+}
+/* the quick start, typed: untyped text is kept in place but invisible, so typing never moves anything. The
+   window's own whitespace between lines is collapsed; each line keeps its own. */
+.typed {
+  white-space: normal;
+}
+.typed .cmdLine,
+.typed .outLine {
+  display: block;
+  white-space: pre-wrap;
+}
+.ghost {
+  color: transparent;
+}
+.typed .outLine {
+  color: var(--c-text);
+  visibility: hidden;
+}
+.typed .outLine[data-shown] {
+  visibility: visible;
+}
+.typed .cmdLine [data-done] {
+  color: var(--c-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow li,
+  .verdict > span,
+  .opText {
     transition: none;
   }
 }

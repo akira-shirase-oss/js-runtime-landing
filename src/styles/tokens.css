@@ -136,7 +136,7 @@
     /* Secondary buttons, and the accent ground outline buttons take on hover. */
     --c-secondary: oklch(0.2686 0 0);
     --c-on-secondary: oklch(0.9219 0 0);
-    --c-accent-bg: oklch(0.4910 0.1442 43.4774);
+    --c-accent-bg: oklch(0.7857 0.1716 68.5720 / 0.14);
 
     /* Focus: the theme's ring is the amber primary; on white that is under 3:1, so light uses the accent ink (AA for a focus mark) and dark the amber. */
     --c-focus: oklch(0.7857 0.1716 68.5720);
@@ -241,7 +241,7 @@
   /* Secondary buttons, and the accent ground outline buttons take on hover. */
   --c-secondary: oklch(0.2686 0 0);
   --c-on-secondary: oklch(0.9219 0 0);
-  --c-accent-bg: oklch(0.4910 0.1442 43.4774);
+  --c-accent-bg: oklch(0.7857 0.1716 68.5720 / 0.14);
 
   /* Focus: the theme's ring is the amber primary; on white that is under 3:1, so light uses the accent ink (AA for a focus mark) and dark the amber. */
   --c-focus: oklch(0.7857 0.1716 68.5720);

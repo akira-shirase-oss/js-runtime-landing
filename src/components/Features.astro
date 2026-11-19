@@ -14,11 +14,25 @@ const flags = [
   ['--max-cpu', 'CPU seconds, via RLIMIT_CPU'],
   ['--kill-grace-ms', 'SIGTERM to SIGKILL, 500 ms default'],
 ]
-const ops = ['rt.fetch', 'rt.readText', 'rt.kv', 'rt.serve', 'rt.media']
+const ops = [
+  ['rt.fetch', 'HTTP, to declared hosts only'],
+  ['rt.readText', 'files inside the declared paths'],
+  ['rt.kv', 'an embedded SQLite store'],
+  ['rt.serve', 'a loopback HTTP listener'],
+  ['rt.media', 'content-addressed uploads'],
+]
 const build = `git clone https://github.com/akira-shirase-oss/js-runtime.git
 cd js-runtime
 cargo build --release --locked -p jsrt
 ./target/release/jsrt run hello.js`
+// The session the window types out: each command, then what it prints (the last line is the quick start's own
+// output; cargo's timing line is left out rather than invented).
+const session: [string, string][] = [
+  ['$ git clone https://github.com/akira-shirase-oss/js-runtime.git', "Cloning into 'js-runtime'..."],
+  ['$ cd js-runtime', ''],
+  ['$ cargo build --release --locked -p jsrt', '   Compiling jsrt v1.0.0'],
+  ['$ ./target/release/jsrt run hello.js', 'hello from jsrt 1.0.0 on v8'],
+]
 ---
 
 <section class="section" id="features">
@@ -28,7 +42,7 @@ cargo build --release --locked -p jsrt
       <h2 class="t-h2">Everything that matters is ours</h2>
     </header>
     <div class={s.grid}>
-      <article class={`glow ${s.card} ${s.wide}`} style="--gx: 0%; --gy: 0%;">
+      <article class={`${s.card} ${s.wide}`} data-panel data-timeline>
         <h3 class={s.title}><strong>Budgets that name who stopped it.</strong> CPU, memory and wall-clock, per worker.</h3>
         <div class={`float ${s.window}`} data-tabs>
           <div class={s.bar}>
@@ -42,6 +56,7 @@ cargo build --release --locked -p jsrt
           </div>
           <div class={s.pane} role="tabpanel" id="sv-time" aria-labelledby="sv-t1">
             <div class={s.lanes}>
+              <span class={s.playhead} aria-hidden="true"></span>
               <span class={s.lane}>looper.js</span>
               <span class={s.track}><span class={`${s.span} ${s.run}`} style="--from: 0; --to: 80;">burning wall clock</span></span>
               <span class={s.lane}>supervisor</span>
@@ -61,43 +76,58 @@ cargo build --release --locked -p jsrt
         </div>
       </article>
 
-      <article class={s.card}>
+      <article class={s.card} data-panel data-redact-card>
         <h3 class={s.title}><strong>Secrets stay out of the logs.</strong> Redaction on forwarded output.</h3>
-        <div class={`glow ${s.stage}`} style="--gx: 100%; --gy: 0%;">
+        <div class={s.stage}>
           <div class={`float ${s.term}`} data-redact>
             <p class={`mono ${s.cmd}`}>$ jsrt supervise leaker.js --redact-env SECRET_VALUE</p>
             <p class={`mono ${s.line}`}>the token is <span class={s.secret} data-raw>hunter2</span><span class={s.masked} data-masked>[redacted]</span></p>
+            <p class={s.which} aria-live="polite" data-which>Forwarded by the supervisor</p>
             <button type="button" class={s.peek} aria-pressed="false" data-peek>Show what the worker printed</button>
           </div>
           <span class={`float ${s.chip}`}>Terminal escapes neutralised</span>
         </div>
       </article>
 
-      <article class={s.card}>
+      <article class={s.card} data-panel data-ops>
         <h3 class={s.title}><strong>One namespace.</strong> rt.* and nothing else.</h3>
         <ul class={s.ops}>
-          {ops.map((o, i) => <li class="mono" style={`--i: ${i}`}>{o}</li>)}
+          {
+            ops.map(([o, d], i) => (
+              <li style={`--i: ${i}`} data-op aria-current={i === 0 ? 'true' : undefined}>
+                <span class="mono">{o}</span>
+                <span class={s.opText}>{d}</span>
+              </li>
+            ))
+          }
         </ul>
       </article>
 
-      <article class={s.card}>
+      <article class={s.card} data-panel data-flow>
         <h3 class={s.title}><strong>V8 inside, Rust in charge.</strong> Every op checks the grant.</h3>
-        <ol class={s.flow}>
+        <ol class={s.flow} data-step="0" data-verdict="ok">
           <li><span class="mono">await rt.fetch(url)</span><small>your script, in V8</small></li>
           <li><span class="mono">op_fetch</span><small>a Rust function</small></li>
-          <li><span class="mono">manifest.net?</span><small>granted, or a CapabilityError</small></li>
+          <li><span class="mono">manifest.net?</span><small class={s.verdict}><span data-ok>granted: the request goes out</span><span data-no>refused: CapabilityError</span></small></li>
         </ol>
         <span class={`float ${s.pill}`}>51.5 ns per op call</span>
       </article>
 
-      <article class={s.card}>
+      <article class={s.card} data-panel data-typer>
         <h3 class={s.title}><strong>Start from a clone.</strong> The <a class="inline-link" href={`${DOCS_URL}/quick-start/`}>quick start</a> builds it.</h3>
         <div class={`float ${s.window} ${s.codeWin}`}>
           <div class={s.bar}>
             <span class={s.dots} aria-hidden="true"><i></i><i></i><i></i></span>
             <button type="button" class={s.copy} data-copy={build}>Copy</button>
           </div>
-          <pre class={`mono ${s.code}`}>{build}</pre>
+          <pre class={`mono ${s.code} ${s.typed}`} aria-label={build}>{
+            session.map(([cmd, out]) => (
+              <>
+                <span class={s.cmdLine} data-line><span data-done></span><span class={s.ghost} data-rest>{cmd}</span></span>
+                {out && <span class={s.outLine} data-out>{out}</span>}
+              </>
+            ))
+          }</pre>
         </div>
       </article>
     </div>
@@ -105,6 +135,7 @@ cargo build --release --locked -p jsrt
 </section>
 
 <script>
+  import { autoplay } from '../scripts/autoplay'
   // Tabs: click or arrow keys, one panel at a time (the WAI-ARIA tabs pattern).
   const root = document.querySelector<HTMLElement>('[data-tabs]')
   if (root) {
@@ -138,6 +169,99 @@ cargo build --release --locked -p jsrt
       term.dataset.raw = String(raw)
       peek.textContent = raw ? 'Show what was forwarded' : 'Show what the worker printed'
     })
+  }
+  // ---- On their own (each stops on hover, focus or touch, off screen, and under reduced motion) ----
+  const replay = (el: HTMLElement) => {
+    delete el.dataset.play
+    void el.offsetWidth
+    el.dataset.play = 'go'
+  }
+  // The supervised run plays out: the worker burns wall clock, SIGTERM at 400 ms, then the report.
+  const timeline = document.querySelector<HTMLElement>('[data-timeline]')
+  if (timeline) {
+    replay(timeline)
+    autoplay(timeline, () => {
+      if (!document.getElementById('sv-time')!.hidden) replay(timeline)
+    }, 4200)
+  }
+  // Redaction: what the worker printed, then what the supervisor forwarded.
+  const card = document.querySelector<HTMLElement>('[data-redact-card]')
+  const which = card?.querySelector<HTMLElement>('[data-which]')
+  if (card && term && peek && which) {
+    const label = () => (which.textContent = term.dataset.raw === 'true' ? 'What the worker printed' : 'Forwarded by the supervisor')
+    peek.addEventListener('click', label)
+    autoplay(card, () => (peek.click(), label()), 2400)
+  }
+  // rt.*: one op at a time says what it does; pointing at one picks it.
+  const ops = document.querySelector<HTMLElement>('[data-ops]')
+  if (ops) {
+    const items = [...ops.querySelectorAll<HTMLElement>('[data-op]')]
+    const pick = (li: HTMLElement) => items.forEach((x) => (x === li ? x.setAttribute('aria-current', 'true') : x.removeAttribute('aria-current')))
+    items.forEach((li) => li.addEventListener('pointerenter', () => pick(li)))
+    autoplay(ops, () => {
+      const i = items.findIndex((x) => x.hasAttribute('aria-current'))
+      pick(items[(i + 1) % items.length])
+    }, 1700)
+  }
+  // A call travels V8 → the op → the grant check; every other call is refused.
+  const flowCard = document.querySelector<HTMLElement>('[data-flow]')
+  const flow = flowCard?.querySelector<HTMLElement>('ol')
+  if (flowCard && flow) {
+    let n = 0
+    autoplay(flowCard, () => {
+      n = (n + 1) % 8
+      flow.dataset.step = String(n % 4)
+      flow.dataset.verdict = n < 4 ? 'ok' : 'no'
+    }, 900)
+  }
+  // The quick start types itself: one character per tick, then the command's output, then a pause.
+  const typer = document.querySelector<HTMLElement>('[data-typer]')
+  if (typer) {
+    const lines = [...typer.querySelectorAll<HTMLElement>('[data-line]')]
+    const reset = () => {
+      for (const l of lines) {
+        const done = l.querySelector<HTMLElement>('[data-done]')!
+        const rest = l.querySelector<HTMLElement>('[data-rest]')!
+        rest.textContent = done.textContent + rest.textContent!
+        done.textContent = ''
+        l.removeAttribute('data-typing')
+      }
+      typer.querySelectorAll<HTMLElement>('[data-out]').forEach((o) => o.removeAttribute('data-shown'))
+    }
+    let line = 0
+    let wait = 0
+    const out = (l: HTMLElement) => {
+      const o = l.nextElementSibling
+      if (o instanceof HTMLElement && o.hasAttribute('data-out')) o.dataset.shown = ''
+    }
+    const tick = () => {
+      if (wait > 0) return void wait--
+      if (line >= lines.length) return void (reset(), (line = 0))
+      const l = lines[line]
+      l.dataset.typing = ''
+      const done = l.querySelector<HTMLElement>('[data-done]')!
+      const rest = l.querySelector<HTMLElement>('[data-rest]')!
+      if (rest.textContent) {
+        done.textContent += rest.textContent[0]
+        rest.textContent = rest.textContent.slice(1)
+        return
+      }
+      l.removeAttribute('data-typing')
+      out(l)
+      line++
+      wait = line >= lines.length ? 60 : 10
+    }
+    // Start finished, so the window is never empty (and stays so with reduced motion); typing begins on view.
+    for (const l of lines) {
+      const done = l.querySelector<HTMLElement>('[data-done]')!
+      const rest = l.querySelector<HTMLElement>('[data-rest]')!
+      done.textContent = rest.textContent
+      rest.textContent = ''
+      out(l)
+    }
+    line = lines.length
+    wait = 30
+    autoplay(typer, tick, 40)
   }
   // Copy: the build commands to the clipboard, with a one-word confirmation.
   for (const b of document.querySelectorAll<HTMLButtonElement>('#features [data-copy]')) {

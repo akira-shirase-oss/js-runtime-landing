@@ -14,7 +14,7 @@
 # Cloudflare Web Analytics auto-injection, Rocket Loader and Zaraz add scripts this policy blocks.
 # Leave them off, or change the policy first.
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-fx/Ld28B18wLa0D9x6mIwT7q87VdSk5MgxtORpQdXR8=' 'sha256-5B0hmfXYyPk/bN+7hhR/ZvN7B2A0vuED3n1yTk2oneQ=' 'sha256-WyQr/h4E+zh6gLbvnnll/4WJa/hgmspt0AxDyeBQ1p0=' 'sha256-ZVOlaHTzKWn0aw/7SlZpzUC33YyUIXuq0yXJ4oNhCNE='; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-5B0hmfXYyPk/bN+7hhR/ZvN7B2A0vuED3n1yTk2oneQ=' 'sha256-WyQr/h4E+zh6gLbvnnll/4WJa/hgmspt0AxDyeBQ1p0=' 'sha256-ZVOlaHTzKWn0aw/7SlZpzUC33YyUIXuq0yXJ4oNhCNE='; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

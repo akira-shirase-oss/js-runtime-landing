@@ -2,13 +2,21 @@
 import Badge from './ui/Badge.astro'
 import s from './Why.module.css'
 
-// Section two, the reference's two showcase panels: one run accounted for, and an honest look at the neighbours.
-// Every neighbour claim is from that project's own docs (linked under the caption), checked 19 Nov 2026.
-const rows = [
-  { name: 'Node.js', text: 'Everything. --permission is opt-in.' },
-  { name: 'Bun', text: 'Everything.' },
-  { name: 'Deno', text: 'Nothing until a flag grants it.' },
-  { name: 'jsrt', text: 'Nothing until the manifest grants it.', us: true },
+// Section two: one run accounted for, beside a real comparison with the neighbours. Every neighbour cell is from
+// that project's own docs (linked under the table), checked 19 Nov 2026: Node's permission model is opt-in and
+// throws ERR_ACCESS_DENIED; Deno denies by default and throws Deno.errors.NotCapable; Bun has no permission model
+// in its stable releases. Cells say what a runtime does, never guess at what it lacks.
+const cols = ['Node.js', 'Deno', 'Bun', 'jsrt']
+const rows: { label: string; cells: (string | boolean)[]; note?: string }[] = [
+  { label: 'Host access by default', cells: ['Full*', 'None', 'Full', 'None'] },
+  { label: 'Grants live in', cells: ['flags', 'flags', '—', 'a manifest per run'] },
+  { label: 'A denied call throws', cells: ['ERR_ACCESS_DENIED', 'NotCapable', '—', 'CapabilityError'] },
+  { label: 'npm: and node: modules', cells: [true, true, true, false] },
+]
+const events = [
+  { at: 'rt.fetch', text: 'api.other.com refused', bad: true },
+  { at: 'exit 7', text: 'reported as capability' },
+  { at: 'report', text: 'outcome, exit_code, killed_by' },
 ]
 ---
 
@@ -20,48 +28,62 @@ const rows = [
     </header>
     <div class={s.grid}>
       <figure class={s.item}>
-        <div class={`glow ${s.panel}`} style="--gx: 0%; --gy: 100%;">
-          <div class={`float ${s.card}`}>
-            <p class={s.cardHead}>
-              <span class={s.mark} aria-hidden="true"></span>
-              <span class="mono">webhook.js</span>
-            </p>
-            <dl class={s.facts}>
-              <div><dt>Status</dt><dd><span class={s.ok}>Classified</span></dd></div>
-              <div><dt>Exit code</dt><dd class="mono">7 · capability</dd></div>
-              <div><dt>Manifest</dt><dd class="mono">net: app.example.com:443</dd></div>
-            </dl>
-            <p class={s.sub}>Events</p>
-            <ol class={s.timeline}>
-              <li><span class="mono">rt.fetch</span><span>api.other.com refused</span></li>
-              <li><span class="mono">exit 7</span><span>reported, never a crash</span></li>
-            </ol>
-          </div>
+        <div class={`float ${s.run}`}>
+          <p class={s.runHead}>
+            <span class={s.mark} aria-hidden="true"></span>
+            <span class="mono">webhook.js</span>
+            <span class={s.ok}>Classified</span>
+          </p>
+          <dl class={s.facts}>
+            <div><dt>Exit code</dt><dd class="mono">7 · capability</dd></div>
+            <div><dt>Manifest</dt><dd class="mono">net: app.example.com:443</dd></div>
+          </dl>
+          <ol class={s.timeline}>
+            {
+              events.map((e) => (
+                <li class={e.bad ? s.bad : ''}>
+                  <span class="mono">{e.at}</span>
+                  <span>{e.text}</span>
+                </li>
+              ))
+            }
+          </ol>
         </div>
-        <figcaption class={s.caption}><strong>A refusal has a name.</strong> The script can catch the CapabilityError; uncaught, the shell sees exit 7, never a stack trace from a crash.</figcaption>
+        <figcaption class={s.caption}><strong>A refusal has a name.</strong> The script can catch the CapabilityError; uncaught, the shell sees exit 7 and the supervisor's report says so, never a crash.</figcaption>
       </figure>
       <figure class={s.item}>
-        <div class={`glow ${s.panel}`} style="--gx: 100%; --gy: 100%;">
-          <div class={`float ${s.card}`}>
-            <p class={s.cardHead}>
-              <span class={s.cardTitle}>Default access to the host</span>
-            </p>
-            <ul class={s.table}>
-              {
-                rows.map((r) => (
-                  <li class={r.us ? s.us : ''}>
-                    <span class={s.who}>{r.name}</span>
-                    <span>{r.text}</span>
-                  </li>
-                ))
-              }
-            </ul>
-            <p class={s.note}><span class="mono">npm:</span> and <span class="mono">node:</span> modules: Node, Deno and Bun run them; jsrt refuses them at resolve time, by design.</p>
+        <div class={`float ${s.tableCard}`}>
+          <div class={s.scroll} tabindex="0" role="region" aria-label="jsrt beside Node.js, Deno and Bun">
+            <table class={s.table}>
+              <thead>
+                <tr><th scope="col"><span class="sr-only">Behaviour</span></th>{cols.map((c) => <th scope="col" class={c === 'jsrt' ? s.us : ''}>{c}</th>)}</tr>
+              </thead>
+              <tbody>
+                {
+                  rows.map((r) => (
+                    <tr>
+                      <th scope="row">{r.label}</th>
+                      {r.cells.map((c, i) => (
+                        <td class={cols[i] === 'jsrt' ? s.us : ''}>
+                          {c === true ? (
+                            <span class={s.yes} aria-label="yes">✓</span>
+                          ) : c === false ? (
+                            <span class={s.no} aria-label="no, by design">✕</span>
+                          ) : (
+                            <span class={/^[A-Z][a-zA-Z_]+$/.test(String(c)) && c !== 'None' && c !== 'Full' ? 'mono' : ''}>{c}</span>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
           </div>
         </div>
         <figcaption class={s.caption}>
-          <strong>Honest about the neighbours.</strong> Node's docs call its permission model a seatbelt, not a security boundary, and Deno denies by default too. jsrt adds a manifest per run, a fixed exit contract and a supervised process, and gives up npm to do it.
-          <span class={s.sources}>Sources: <a class="inline-link" href="https://nodejs.org/api/permissions.html">Node permissions</a>, <a class="inline-link" href="https://docs.deno.com/runtime/fundamentals/security/">Deno security</a>.</span>
+          <strong>Honest about the neighbours.</strong> Deno denies by default too. jsrt adds a manifest per run, a fixed exit contract and a supervised process, and gives up npm to do it. *Node's docs call its permission model a seatbelt, not a security boundary.
+          <span class={s.sources}>Sources: <a class="inline-link" href="https://nodejs.org/api/permissions.html">Node permissions</a>, <a class="inline-link" href="https://docs.deno.com/runtime/fundamentals/security/">Deno security</a>, <a class="inline-link" href="https://bun.sh/docs">Bun docs</a>.</span>
         </figcaption>
       </figure>
     </div>
