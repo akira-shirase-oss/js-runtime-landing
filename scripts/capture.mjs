@@ -52,23 +52,29 @@ for (const width of [1440, 390]) {
     const page = await browser.newPage({ viewport, colorScheme })
     await page.goto(origin + '/', { waitUntil: 'networkidle' })
     await page.evaluate(() => document.fonts.ready)
-    // Let the once-only effects finish, deterministically: scroll through so the cards reveal and the
-    // wordmark prints, then wait until nothing is left pending or still printing.
+    // Walk the page like a reader: step to the bottom so every reveal and the footer wordmark's print
+    // fire, then back to the top. 'instant' matters — the page's smooth scroll-behavior turns a plain
+    // scrollTo into an animated glide that a fast loop only ever chases, and the wordmark stays armed.
     await page.evaluate(async () => {
-      for (let y = 0; y < document.body.scrollHeight; y += 600) {
-        window.scrollTo(0, y)
-        await new Promise((r) => setTimeout(r, 30))
+      const pause = () => new Promise((r) => setTimeout(r, 60))
+      const bottom = () => Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - innerHeight
+      for (let y = 0; y < bottom(); y += Math.round(innerHeight * 0.75)) {
+        window.scrollTo({ top: y, behavior: 'instant' })
+        await pause()
       }
-      window.scrollTo(0, 0)
+      window.scrollTo({ top: bottom(), behavior: 'instant' })
+      await pause()
+      window.scrollTo({ top: 0, behavior: 'instant' })
     })
+    // Then wait, strictly, for every once-only effect to be done: no grid left pending, and the
+    // wordmark's clip fully released ('none', or an inset whose values all parse to zero).
     await page.waitForFunction(() => {
       const pending = [...document.querySelectorAll('[data-reveal]')].some((g) => g.dataset.reveal === 'pending')
       const clip = getComputedStyle(document.querySelector('[data-wordmark]')).clipPath
-      return !pending && (clip === 'none' || clip === 'inset(0px)')
+      const unclipped = clip === 'none' || (clip.startsWith('inset(') && clip.slice(6, -1).trim().split(/\s+/).every((v) => parseFloat(v) === 0))
+      return !pending && unclipped
     })
-    await page.waitForTimeout(700)
-    await page.evaluate(() => scrollTo(0, 0))
-    await page.waitForTimeout(300)
+    await page.waitForTimeout(400)
     const name = `home-${width}-${colorScheme}.png`
     await page.screenshot({ path: join(out, name), fullPage: true })
     shots.push(name)

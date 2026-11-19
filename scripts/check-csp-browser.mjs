@@ -100,12 +100,16 @@ async function visit(path, viewport, act, colorScheme = 'light') {
 
   const response = await page.goto(origin + path, { waitUntil: 'load' })
   if (!response.headers()['content-security-policy']) report('served without a Content-Security-Policy header')
-  // Scroll through the page so lazy assets and the reveal-on-view scripts run too.
+  // Scroll through the page so lazy assets and the reveal-on-view scripts run too. 'instant' because
+  // the page's smooth scroll-behavior would make a fast loop chase the scroll instead of arriving.
   await page.evaluate(async () => {
-    for (let y = 0; y < document.body.scrollHeight; y += 600) {
-      window.scrollTo(0, y)
+    const bottom = () => Math.max(document.documentElement.scrollHeight, document.body.scrollHeight) - innerHeight
+    for (let y = 0; y < bottom(); y += Math.round(innerHeight * 0.75)) {
+      window.scrollTo({ top: y, behavior: 'instant' })
       await new Promise((r) => setTimeout(r, 40))
     }
+    window.scrollTo({ top: bottom(), behavior: 'instant' })
+    await new Promise((r) => setTimeout(r, 60))
   })
   await page.waitForLoadState('networkidle')
   await page.evaluate(() => document.fonts.ready)
