@@ -380,9 +380,3 @@ figcaption {
   white-space: nowrap;
   border: 0;
 }
-
-/* A panel that plays on its own (autoplay.ts) holds every running animation still while it is paused. */
-[data-autoplay='paused'],
-[data-autoplay='paused'] * {
-  animation-play-state: paused !important;
-}

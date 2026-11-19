@@ -1,7 +1,9 @@
 // The hero panels play on their own (the maintainer's call, 2026-11-19) and stop the moment anyone engages:
+// no further step starts
 // on hover, on keyboard focus inside, on a touch, while the panel is off screen, while the tab is hidden, and
 // never at all when the visitor asks for reduced motion. One timer per panel, re-armed only while it may run,
-// so an idle page with the panels out of view does no work.
+// so an idle page with the panels out of view does no work. A step already playing, and anything a visitor
+// clicks, always plays to its end: pausing must never freeze an animation on its hidden first frame.
 export function autoplay(panel: HTMLElement, step: () => void, everyMs: number): void {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)')
   let timer = 0

@@ -305,8 +305,17 @@ await visit('/', desktop, async (page, report) => {
 }, 'light', { reducedMotion: 'reduce' })
 await visit('/', desktop, async (page, report) => {
   interactions++
+  // Clicking holds the pointer over the card (which pauses the autoplay); the replay must still play out.
   await page.locator('[data-run-again]').click()
   if ((await page.locator('[data-run]').getAttribute('data-play')) !== 'go') report('Run again did not replay the events')
+  await page.waitForTimeout(1600)
+  const stuck = await page.evaluate(() => {
+    const card = document.querySelector('[data-run]')
+    const frozen = card.getAnimations({ subtree: true }).filter((a) => a.playState !== 'finished').length
+    const hidden = [...card.querySelectorAll('li, pre span')].filter((e) => Number(getComputedStyle(e).opacity) < 0.05).length
+    return { frozen, hidden }
+  })
+  if (stuck.frozen || stuck.hidden) report(`after Run again, ${stuck.frozen} animation(s) never finished and ${stuck.hidden} line(s) stayed hidden`)
 })
 await visit('/', desktop, async (page, report) => {
   interactions++
