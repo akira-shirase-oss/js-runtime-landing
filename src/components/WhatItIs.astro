@@ -80,19 +80,25 @@ const cards: { title: string; lines: [string, string]; tag: string; tone: Tone; 
 
 <script>
   // Micro-interaction: cards rise in, staggered, the first time the grid scrolls into view.
-  // Without JavaScript (or with reduced motion) they are simply visible.
+  // Progressive enhancement only: 'pending' (the hidden start, gated on html.js) is applied solely
+  // to a grid that is still below the fold and will actually be revealed — a grid already in the
+  // viewport is marked shown at once, and without JavaScript or with reduced motion nothing ever hides.
   const grid = document.querySelector<HTMLElement>('[data-why]')!
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-    grid.dataset.reveal = 'pending'
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          grid.dataset.reveal = 'shown'
-          io.disconnect()
-        }
-      },
-      { threshold: 0.15 },
-    )
-    io.observe(grid)
+    if (grid.getBoundingClientRect().top < window.innerHeight) {
+      grid.dataset.reveal = 'shown'
+    } else {
+      grid.dataset.reveal = 'pending'
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            grid.dataset.reveal = 'shown'
+            io.disconnect()
+          }
+        },
+        { threshold: 0.15 },
+      )
+      io.observe(grid)
+    }
   }
 </script>

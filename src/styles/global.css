@@ -40,9 +40,11 @@
   --font-text: 'Inter', 'Inter Fallback', sans-serif;
   --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   /* Printing, like a receipt printer, row by row: the hero's title and the footer's wordmark share it.
-     600ms a printed line; a line of Geist Pixel at line-height 1.1 is 29 pixel rows. */
+     The title reveals its whole block in one ~1.1 s stepped pass (a line of Geist Pixel at line-height
+     1.1 is 29 pixel rows; --print-steps counts them across all lines). The wordmark prints in 600 ms. */
   --print-line: 600ms;
   --print-rows: 29;
+  --print-total: 1.1s;
 
   /* One easing curve for every transition; --spring is kept as an alias for older rules */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -288,7 +290,7 @@ figcaption {
 }
 @media (prefers-reduced-motion: no-preference) {
   [data-print-title][data-print='go'] {
-    animation: print calc(var(--print-line) * var(--print-lines, 1)) steps(var(--print-steps, 29), end);
+    animation: print var(--print-total) steps(var(--print-steps, 29), end);
   }
 }
 .visually-hidden {

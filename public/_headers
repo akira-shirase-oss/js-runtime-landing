@@ -14,7 +14,7 @@
 # Cloudflare Web Analytics auto-injection, Rocket Loader and Zaraz add scripts this policy blocks.
 # Leave them off, or change the policy first.
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-wsmnxD6kqdZZ/V2wQ85d92sMux2lvh7NN1y5/Y5SS5c=' 'sha256-ZVOlaHTzKWn0aw/7SlZpzUC33YyUIXuq0yXJ4oNhCNE=' 'sha256-jcGxqr5df3Yhy0nzg+sEMXDaoMkTSBu+zNSbj1FavsI=' 'sha256-jrYezD1/P9Heb7qpKs5Weywe2INyZ5MGDPbI9m8v1fo=' 'sha256-RHue8hNC+iXtSc7f1PvTU83Oa7ym3U892m8zxMfPesA=' 'sha256-JYHlBxWpqSMZ7GCm86gam85wwbHNceTXU35m8NBfQjQ='; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-WyQr/h4E+zh6gLbvnnll/4WJa/hgmspt0AxDyeBQ1p0=' 'sha256-ZVOlaHTzKWn0aw/7SlZpzUC33YyUIXuq0yXJ4oNhCNE=' 'sha256-jcGxqr5df3Yhy0nzg+sEMXDaoMkTSBu+zNSbj1FavsI=' 'sha256-DHecGSDMSPYncmCstntyEEWbnl08Mc6ByW7+qGUYgho=' 'sha256-BBWKTzZ8U7P8Qg3scCX89rtmstVKuguiJIn54EcMbdM=' 'sha256-JYHlBxWpqSMZ7GCm86gam85wwbHNceTXU35m8NBfQjQ='; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

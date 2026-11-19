@@ -135,8 +135,9 @@
   }
 }
 
-/* entrance, once: set by the component's script only, so the cards are always visible without it */
-.grid[data-reveal='pending'] .card {
+/* entrance, once: 'pending' is set by the component's script only, and only reaches the page when
+   JavaScript is on (html.js, set before paint) — without JS every card is simply visible */
+:global(html.js) .grid[data-reveal='pending'] .card {
   opacity: 0;
   transform: translateY(8px);
 }

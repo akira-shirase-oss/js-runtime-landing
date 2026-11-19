@@ -125,6 +125,8 @@
   padding-top: 8px;
 }
 .wordmark {
+  /* ~11.7px cells, the same density as the family's 112-cell word — not stretched to the panel width */
+  width: min(480px, 100%);
   aspect-ratio: 41 / 21;
   overflow: hidden;
 }

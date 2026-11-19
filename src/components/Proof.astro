@@ -100,19 +100,24 @@ const contract = [
 </section>
 
 <script>
-  // Same once-only entrance as the cards above it.
+  // Same once-only entrance as the cards above it: 'pending' only when the grid is still below the
+  // fold, so it is never left hidden.
   const grid = document.querySelector<HTMLElement>('[data-proof]')!
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-    grid.dataset.reveal = 'pending'
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          grid.dataset.reveal = 'shown'
-          io.disconnect()
-        }
-      },
-      { threshold: 0.15 },
-    )
-    io.observe(grid)
+    if (grid.getBoundingClientRect().top < window.innerHeight) {
+      grid.dataset.reveal = 'shown'
+    } else {
+      grid.dataset.reveal = 'pending'
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            grid.dataset.reveal = 'shown'
+            io.disconnect()
+          }
+        },
+        { threshold: 0.15 },
+      )
+      io.observe(grid)
+    }
   }
 </script>

@@ -40,8 +40,9 @@ const ld = structured ? (Array.isArray(structured) ? structured : [structured]) 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <!-- Before the first paint: a stored Light or Dark choice (else the device's setting decides, through
-         tokens.css). Nothing is fetched. Hash-allowed in _headers. -->
-    <script is:inline>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+         tokens.css), and the `js` class that gates the reveal-on-view hidden start state — so without
+         JavaScript every section is simply visible. Nothing is fetched. Hash-allowed in _headers. -->
+    <script is:inline>document.documentElement.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}

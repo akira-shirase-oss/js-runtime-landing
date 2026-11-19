@@ -28,12 +28,14 @@ const { class: className } = Astro.props
       shape-rendering: geometricPrecision;
     }
   }
-  /* Printing: the rows appear from the top, in steps, once. */
+  /* Printing: the rows appear from the top, in steps, once. 'armed' is set by the footer's script
+     only, and only when the word is still below the fold — the html.js gate keeps it harmless if a
+     build ever carried the attribute without its script. */
   @media (prefers-reduced-motion: no-preference) {
-    :global([data-wordmark][data-print='armed']) {
+    :global(html.js) :global([data-wordmark][data-print='armed']) {
       clip-path: inset(0 0 100% 0);
     }
-    :global([data-wordmark][data-print='go']) {
+    :global(html.js) :global([data-wordmark][data-print='go']) {
       animation: print var(--print-line) steps(var(--rows), end) both;
     }
   }

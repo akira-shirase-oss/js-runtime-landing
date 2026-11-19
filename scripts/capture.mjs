@@ -52,7 +52,8 @@ for (const width of [1440, 390]) {
     const page = await browser.newPage({ viewport, colorScheme })
     await page.goto(origin + '/', { waitUntil: 'networkidle' })
     await page.evaluate(() => document.fonts.ready)
-    // Let the once-only effects settle: scroll through so the cards reveal and the wordmark prints.
+    // Let the once-only effects finish, deterministically: scroll through so the cards reveal and the
+    // wordmark prints, then wait until nothing is left pending or still printing.
     await page.evaluate(async () => {
       for (let y = 0; y < document.body.scrollHeight; y += 600) {
         window.scrollTo(0, y)
@@ -60,7 +61,14 @@ for (const width of [1440, 390]) {
       }
       window.scrollTo(0, 0)
     })
-    await page.waitForTimeout(1600)
+    await page.waitForFunction(() => {
+      const pending = [...document.querySelectorAll('[data-reveal]')].some((g) => g.dataset.reveal === 'pending')
+      const clip = getComputedStyle(document.querySelector('[data-wordmark]')).clipPath
+      return !pending && (clip === 'none' || clip === 'inset(0px)')
+    })
+    await page.waitForTimeout(700)
+    await page.evaluate(() => scrollTo(0, 0))
+    await page.waitForTimeout(300)
     const name = `home-${width}-${colorScheme}.png`
     await page.screenshot({ path: join(out, name), fullPage: true })
     shots.push(name)

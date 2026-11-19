@@ -269,11 +269,25 @@ await visit('/', desktop, async (page, report) => {
   await page.evaluate(() => document.querySelector('footer').scrollIntoView({ block: 'end' }))
   await page.waitForTimeout(1500)
   const after = await page.evaluate(() => { const w = document.querySelector('[data-wordmark]'); return { print: w.dataset.print, clip: getComputedStyle(w).clipPath } })
-  if (after.print !== 'go' || /100%/.test(after.clip)) report(`the wordmark never printed: ${JSON.stringify(after)}`)
+  if (after.print !== 'go' || !(after.clip === 'none' || after.clip === 'inset(0px)')) {
+    report(`the wordmark never finished printing: ${JSON.stringify(after)}`)
+  }
   for (const sel of ['[data-why]', '[data-proof]']) {
     const reveal = await page.evaluate((sel) => document.querySelector(sel)?.dataset.reveal, sel)
     if (reveal !== 'shown') report(`${sel} did not reveal in view (data-reveal=${reveal})`)
   }
+  // A full-height view (what a full-page capture sees): no section may stay blank.
+  const fullHeight = await page.evaluate(() => document.documentElement.scrollHeight)
+  await page.setViewportSize({ width: desktop.width, height: fullHeight })
+  await page.waitForTimeout(900)
+  const blanks = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-reveal]')]
+      .flatMap((g) => [...g.querySelectorAll('*')])
+      .filter((e) => e.children.length === 0 && e.textContent.trim() && getComputedStyle(e).opacity !== '1')
+      .map((e) => `${e.tagName.toLowerCase()} "${e.textContent.trim().slice(0, 40)}" at opacity ${getComputedStyle(e).opacity}`)
+      .slice(0, 5),
+  )
+  for (const b of blanks) report(`still hidden in a full-height view: ${b}`)
   await page.evaluate(() => scrollTo(0, 0))
   const boxes = () => page.evaluate(() => [...document.querySelectorAll('[data-hero-field] > span')].map((e) => { const r = e.getBoundingClientRect(); return `${Math.round(r.left)},${Math.round(r.top)}` }).join(' '))
   const at = await boxes()
@@ -291,6 +305,30 @@ await visit('/', desktop, async (page, report) => {
   interactions++
   const still = await page.evaluate(() => ({ print: document.querySelector('[data-wordmark]').dataset.print ?? null, running: document.getAnimations().length }))
   if (still.print !== null || still.running) problems.push(`/ [reduced motion]: something still moves: ${JSON.stringify(still)}`)
+  await context.close()
+}
+
+// With JavaScript off the page is complete: every section's text is simply there — no reveal, no print,
+// no script ever asked to run.
+{
+  const context = await browser.newContext({ viewport: desktop, javaScriptEnabled: false })
+  const page = await context.newPage()
+  await page.goto(origin + '/', { waitUntil: 'load' })
+  interactions++
+  const hidden = await page.evaluate(() => {
+    const out = []
+    document.querySelectorAll('main section').forEach((s) => {
+      const text = s.textContent.trim()
+      const visible = [...s.querySelectorAll('*')].some((e) => {
+        const st = getComputedStyle(e)
+        const r = e.getBoundingClientRect()
+        return e.children.length === 0 && e.textContent.trim() && st.opacity === '1' && st.clipPath !== 'inset(0px 0px 100% 0px)' && r.width > 0 && r.height > 0
+      })
+      if (text && !visible) out.push(`${s.id || s.className}: no visible text`)
+    })
+    return out
+  })
+  for (const h of hidden) problems.push(`/ [no JavaScript]: section hidden — ${h}`)
   await context.close()
 }
 
