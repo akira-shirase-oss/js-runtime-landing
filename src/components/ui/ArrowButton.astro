@@ -1,0 +1,34 @@
+---
+import styles from './ArrowButton.module.css'
+
+type Props = {
+  href: string
+  variant?: 'primary' | 'secondary' | 'onBrand' | 'onBrandGhost'
+  /** stretch to the parent's width */
+  block?: boolean
+}
+
+/**
+ * Dark (or white) pill with an accent square. On hover the pixel arrow
+ * slides out to the right while a twin slides in, and the label rolls up.
+ */
+const { href, variant = 'primary', block = false } = Astro.props
+const label = await Astro.slots.render('default')
+---
+
+<a href={href} class={`${styles.button} ${styles[variant]} ${block ? styles.block : ''}`}>
+  <span class={styles.content}>
+    <span class={styles.square} aria-hidden="true">
+      <span class={styles.arrows}>
+        <span class={styles.arrow}></span>
+        <span class={styles.arrow}></span>
+      </span>
+    </span>
+    <span class={styles.text}>
+      <span class={styles.roll}>
+        <span set:html={label} />
+        <span aria-hidden="true" set:html={label} />
+      </span>
+    </span>
+  </span>
+</a>

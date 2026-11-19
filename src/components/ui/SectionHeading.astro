@@ -1,0 +1,16 @@
+---
+/** Small label above a large display heading. */
+type Props = {
+  badge: string
+  align?: 'start' | 'center'
+  width?: number
+  class?: string
+}
+const { badge, align = 'start', width = 540, class: className } = Astro.props
+const style = `display: flex; flex-direction: column; gap: 12px; align-items: ${align === 'center' ? 'center' : 'flex-start'}; text-align: ${align}; max-width: ${width}px; width: 100%;`
+---
+
+<div style={style} class={className}>
+  <p class="t-badge">{badge}</p>
+  <h2 class="t-h2"><slot /></h2>
+</div>

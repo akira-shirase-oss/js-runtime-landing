@@ -1,0 +1,92 @@
+---
+import { REPO, DOCS_URL, CHANGELOG_URL, X_URL } from '../data/site'
+import MaskIcon from './ui/MaskIcon.astro'
+import BrandLogo from './ui/BrandLogo.astro'
+import BrandWordmark from './ui/BrandWordmark.astro'
+import styles from './Footer.module.css'
+
+// The footer links only to what exists: the docs, the changelog, the repository and its issue tracker.
+const columns = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Docs', href: DOCS_URL },
+      { label: 'Changelog', href: CHANGELOG_URL },
+      { label: 'Quick start', href: `${DOCS_URL}/quick-start/` },
+    ],
+  },
+  {
+    title: 'Build',
+    links: [
+      { label: 'Source code', href: REPO },
+      { label: 'Open an issue', href: `${REPO}/issues` },
+      { label: 'Load evidence', href: `${REPO}/tree/main/perf` },
+    ],
+  },
+]
+
+// Prints the pixel wordmark once, row by row, when the footer first comes into view (only if it starts below
+// the fold and motion is allowed). It watches the word's frame, because the clipped word itself never counts
+// as in view. Without this script the word simply stands there.
+const PRINT =
+  "var w=document.querySelector('[data-wordmark]');if(w&&'IntersectionObserver'in window&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&w.getBoundingClientRect().top>innerHeight){w.dataset.print='armed';var o=new IntersectionObserver(function(e){if(e[0].isIntersecting){o.disconnect();requestAnimationFrame(function(){w.dataset.print='go'})}},{threshold:0.3});o.observe(w.parentElement)}"
+
+const socials = [
+  { icon: '/icons/x.svg', label: 'jsrt on X', href: X_URL },
+  { icon: '/icons/github.svg', label: 'jsrt on GitHub', href: REPO },
+]
+---
+
+<footer class={styles.footer}>
+  <div class={styles.inner}>
+    <div class={styles.top}>
+      <a href="/" aria-label="jsrt home">
+        <BrandLogo />
+      </a>
+      <div class={styles.social}>
+        <p class="t-tiny">Social media</p>
+        <div class={styles.socialButtons}>
+          {
+            socials.map((s) => (
+              <a href={s.href} aria-label={s.label} class={styles.socialBtn}>
+                <MaskIcon src={s.icon} size={24} color="var(--c-ink)" />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class={styles.links}>
+      <p class={`t-tiny ${styles.tagline}`}>
+        A purpose-built JavaScript host in Rust: every capability declared, every ending classified.
+      </p>
+      <nav class={styles.menu} aria-label="Footer">
+        {
+          columns.map((c) => (
+            <div class={styles.column}>
+              <p class={`t-label ${styles.colTitle}`}>
+                <span class={styles.square} aria-hidden="true" />
+                {c.title}
+              </p>
+              {c.links.map((l) => (
+                <a href={l.href} class={`t-tiny ${styles.link}`}>
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          ))
+        }
+      </nav>
+    </div>
+
+    <div class={styles.legal}>
+      <p class="t-small">© 2026 jsrt&nbsp;· <span class={styles.keep}>Made with <a href={REPO}>Rust and V8</a></span></p>
+      <p class={`t-small ${styles.imprint}`}>Set in Geist Pixel and Inter</p>
+    </div>
+    <div class={styles.wordmark}>
+      <BrandWordmark class={styles.wordmarkImg} />
+    </div>
+  </div>
+</footer>
+<script is:inline set:html={PRINT} />

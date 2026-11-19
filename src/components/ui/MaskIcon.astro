@@ -1,0 +1,8 @@
+---
+/** Tintable icon: an SVG used as a CSS mask over a solid colour. */
+type Props = { src: string; size?: number; color?: string; class?: string }
+const { src, size = 24, color = 'currentColor', class: className } = Astro.props
+const style = `display: block; width: ${size}px; height: ${size}px; flex-shrink: 0; background-color: ${color}; -webkit-mask: url("${src}") center / 100% 100% no-repeat; mask: url("${src}") center / 100% 100% no-repeat;`
+---
+
+<span aria-hidden="true" class={className} style={style}></span>

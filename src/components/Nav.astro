@@ -1,0 +1,132 @@
+---
+import ArrowButton from './ui/ArrowButton.astro'
+import BrandLogo from './ui/BrandLogo.astro'
+import styles from './Nav.module.css'
+import { REPO, DOCS_URL, CHANGELOG_URL } from '../data/site'
+
+// One button between light and dark that follows the system until pressed; pressing onto the system's own
+// scheme goes back to following it. A stored choice is applied before first paint by the inline script in
+// Base.astro. Icons: lucide sun and moon.
+const SUN = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.07 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'
+const MOON = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'
+
+const links = [
+  { label: 'Proof', href: '/#proof' },
+  { label: 'Quick start', href: '/#quick-start' },
+  { label: 'Docs', href: DOCS_URL },
+  { label: 'Changelog', href: CHANGELOG_URL },
+]
+---
+
+<header class={styles.wrap}>
+  <nav class={styles.nav} aria-label="Primary" data-nav>
+    <div class={styles.container}>
+      <a href="/" class={styles.logo} aria-label="jsrt home">
+        <BrandLogo />
+      </a>
+      <div class={styles.menu}>
+        <div class={styles.links}>
+          {
+            links.map((l, i) => (
+              <>
+                {i > 0 && <span class={styles.dot} aria-hidden="true" />}
+                <a href={l.href} class={`t-label ${styles.link}`}>
+                  {l.label}
+                </a>
+              </>
+            ))
+          }
+        </div>
+        <ArrowButton href={REPO}>View on GitHub</ArrowButton>
+      </div>
+      <button
+        type="button"
+        class={styles.toggle}
+        aria-label="Dark theme"
+        aria-pressed="false"
+        title="Switch to dark (following your system)"
+        data-theme-toggle
+      >
+        <svg class={`${styles.icon} ${styles.sun}`} viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={SUN} />
+        <svg class={`${styles.icon} ${styles.moon}`} viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={MOON} />
+      </button>
+      <button type="button" class={styles.burger} aria-label="Open menu" aria-expanded="false" data-nav-toggle>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <!-- The phone menu exists in the DOM only while open. -->
+    <template data-nav-menu>
+      <div class={styles.mobileMenu}>
+        {
+          links.map((l) => (
+            <a href={l.href} class="t-h5" data-nav-close>
+              {l.label}
+            </a>
+          ))
+        }
+        <ArrowButton href={REPO}>View on GitHub</ArrowButton>
+      </div>
+    </template>
+  </nav>
+</header>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-nav]')!
+  const toggle = nav.querySelector<HTMLButtonElement>('[data-nav-toggle]')!
+  const template = nav.querySelector<HTMLTemplateElement>('[data-nav-menu]')!
+  let menu: HTMLElement | null = null
+
+  const setOpen = (open: boolean) => {
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu')
+    toggle.setAttribute('aria-expanded', String(open))
+    if (open && !menu) {
+      menu = template.content.firstElementChild!.cloneNode(true) as HTMLElement
+      menu.querySelectorAll('[data-nav-close]').forEach((a) => a.addEventListener('click', () => setOpen(false)))
+      template.before(menu)
+    } else if (!open && menu) {
+      menu.remove()
+      menu = null
+    }
+  }
+  toggle.addEventListener('click', () => setOpen(!menu))
+
+  // Theme: one toggle between light and dark. No stored choice means the system decides;
+  // flipping onto the system's own scheme clears the choice again. The new theme grows from the button as a
+  // circle (a view transition) unless motion is reduced or the browser has none.
+  const button = nav.querySelector<HTMLButtonElement>('[data-theme-toggle]')!
+  const root = document.documentElement
+  const system = matchMedia('(prefers-color-scheme: dark)')
+  const isDark = () => (root.dataset.theme ? root.dataset.theme === 'dark' : system.matches)
+  const sync = () => {
+    const dark = isDark()
+    button.setAttribute('aria-pressed', String(dark))
+    button.title = `${dark ? 'Switch to light' : 'Switch to dark'}${root.dataset.theme ? '' : ' (following your system)'}`
+  }
+  const apply = (next: string) => {
+    const follow = next === (system.matches ? 'dark' : 'light')
+    if (follow) delete root.dataset.theme
+    else root.dataset.theme = next
+    try {
+      if (follow) localStorage.removeItem('theme')
+      else localStorage.setItem('theme', next)
+    } catch {}
+    sync()
+  }
+  button.addEventListener('click', () => {
+    const next = isDark() ? 'light' : 'dark'
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return apply(next)
+    const box = button.getBoundingClientRect()
+    const x = box.left + box.width / 2
+    const y = box.top + box.height / 2
+    const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+    document.startViewTransition(() => apply(next)).ready.then(() =>
+      root.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+        { duration: 480, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
+      ),
+    )
+  })
+  system.addEventListener('change', sync)
+  sync()
+</script>

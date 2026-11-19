@@ -1,0 +1,183 @@
+/* The footer is a panel, not a band: the hero card's inset and radius, on the page background, so the
+   two cards frame the page. Its bottom margin matches the hero's top margin. */
+.footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 var(--panel-inset) var(--panel-inset);
+}
+.inner {
+  width: 100%;
+  max-width: var(--panel-max);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px var(--panel-pad) 0;
+  border-radius: 24px;
+  background: var(--c-surface);
+  overflow: hidden;
+}
+/* The panel is as wide as the hero card (1380); its content keeps the page's column. */
+.inner > * {
+  width: 100%;
+  max-width: var(--content-max);
+  align-self: center;
+}
+.top {
+  position: relative;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+.top::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-bottom: 1px dashed var(--c-dash);
+  pointer-events: none;
+}
+.logo {
+  border-radius: 4px;
+  object-fit: cover;
+}
+.social {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.socialButtons {
+  display: flex;
+  gap: 8px;
+}
+.socialBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--c-faint);
+  transition: background-color 0.3s var(--ease);
+}
+.socialBtn:hover {
+  background: var(--c-line);
+}
+
+.links {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+/* Every line in the footer is 16px; the hierarchy comes from weight and colour (Product and Build at 500
+   in ink, links in ink, the rest in the text grey). */
+.footer :global(:is(.t-tiny, .t-small, .t-label)) {
+  font-size: 16px;
+  line-height: 1.45;
+}
+.tagline {
+  max-width: 36ch;
+}
+/* a phrase that wraps as one piece */
+.keep {
+  white-space: nowrap;
+}
+.menu {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+.column {
+  width: 133px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.colTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.square {
+  width: 4px;
+  height: 4px;
+  background: var(--c-accent);
+}
+.link {
+  padding-left: 16px;
+  color: var(--c-ink);
+  transition: color 0.3s var(--ease);
+}
+.link:hover {
+  color: var(--c-muted);
+}
+
+/* The legal line, then the pixel wordmark below it: the word's cap height shows, cut by the panel's
+   rounded bottom (the grid is 41 cells wide; 21 rows show). */
+.legal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  padding-top: 8px;
+}
+.wordmark {
+  aspect-ratio: 41 / 21;
+  overflow: hidden;
+}
+.wordmarkImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* links inside the legal and imprint lines: ink and an underline, as in running text elsewhere,
+   so they never rely on colour alone */
+.legal a {
+  color: var(--c-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--c-underline);
+  text-underline-offset: 3px;
+}
+.legal a:hover {
+  text-decoration-color: currentColor;
+}
+.imprint {
+  color: var(--c-text);
+}
+
+@media (max-width: 1199px) {
+  .menu {
+    gap: 20px;
+  }
+  .column {
+    width: 147px;
+  }
+}
+@media (max-width: 809px) {
+  .legal {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .inner {
+    padding-top: 32px;
+  }
+  .top {
+    align-items: flex-start;
+  }
+  .links {
+    flex-direction: column;
+    gap: 40px;
+  }
+  .menu {
+    width: 100%;
+    gap: 20px;
+  }
+  .column {
+    flex: 1 1 0;
+    width: auto;
+  }
+}

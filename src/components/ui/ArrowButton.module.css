@@ -1,0 +1,129 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.primary {
+  background: var(--c-ink);
+  color: var(--c-on-ink);
+}
+.secondary {
+  background: var(--c-on-ink);
+  color: var(--c-ink);
+}
+.block {
+  width: 100%;
+}
+/* On the brand block: a navy pill, a white square with a navy arrow, white text; the same in both themes. */
+.onBrand {
+  background: var(--c-brand-button);
+  color: var(--c-brand-button-text);
+}
+/* Its quiet sibling on the brand block: a navy hairline, navy type, the same navy square and white arrow. */
+.onBrandGhost {
+  background: transparent;
+  color: var(--c-on-brand);
+  box-shadow: inset 0 0 0 1px var(--c-brand-button);
+}
+/* A focus ring that shows on every ground: the page's focus colour, and navy on the brand block. */
+.button:focus-visible {
+  outline: 2px solid var(--c-focus);
+  outline-offset: 3px;
+}
+.onBrand:focus-visible,
+.onBrandGhost:focus-visible {
+  outline-color: var(--c-on-brand);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  padding: 4px 12px 4px 4px;
+}
+
+.square {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 4px;
+  background: var(--c-accent);
+  overflow: hidden;
+}
+/* Two arrows side by side; the right one is visible at rest. */
+.arrows {
+  display: flex;
+  width: 48px;
+  margin-right: 6px;
+  transform: translateX(0);
+  transition: transform 0.45s var(--spring);
+}
+.arrow {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  background: var(--c-ink);
+  -webkit-mask: url('/icons/arrow.svg') center / 100% 100% no-repeat;
+  mask: url('/icons/arrow.svg') center / 100% 100% no-repeat;
+}
+.button:hover .arrows {
+  transform: translateX(24px);
+}
+
+.text {
+  display: block;
+  height: 17px;
+  overflow: hidden;
+  font-family: var(--font-text);
+  font-size: 14px;
+  line-height: 16.8px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.roll {
+  display: flex;
+  flex-direction: column;
+  opacity: 0.9;
+  transition: transform 0.45s var(--spring);
+}
+.roll > span {
+  display: block;
+  height: 17px;
+}
+.button:hover .roll {
+  transform: translateY(-17px);
+}
+
+/* Ink / paper scheme, which swaps with the theme: primary = ink pill, paper square, ink arrow;
+   secondary = paper pill, ink square, paper arrow. */
+.primary .square {
+  background: var(--c-on-ink);
+}
+.primary .arrow {
+  background: var(--c-ink);
+}
+.secondary .square {
+  background: var(--c-ink);
+}
+.secondary .arrow {
+  background: var(--c-on-ink);
+}
+.onBrand .square {
+  background: var(--c-brand-button-text);
+}
+.onBrand .arrow {
+  background: var(--c-brand-button);
+}
+.onBrandGhost .square {
+  background: var(--c-brand-button);
+}
+.onBrandGhost .arrow {
+  background: var(--c-brand-button-text);
+}

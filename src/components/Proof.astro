@@ -1,0 +1,116 @@
+---
+import SectionHeading from './ui/SectionHeading.astro'
+import styles from './Proof.module.css'
+import { REPO, DOCS_URL, CHANGELOG_URL } from '../data/site'
+
+// Every number here exists in the product repository's committed evidence (perf/results/, LOAD_MATRIX.md):
+// the load driver, machine, commit and date are recorded per run. These are development observations on one
+// workstation, never production-capacity claims — the footnote says so, as the workspace's evidence rule asks.
+const evidence = `${REPO}/blob/main/perf/LOAD_MATRIX.md`
+const stats = [
+  {
+    n: '1,000,000',
+    unit: 'requests served',
+    text: 'every one answered ok through rt.serve, at 86,620 rps with p50 latency of 367 µs on 32 keep-alive connections.',
+    how: 'the jsrt-load driver against a release build, 2026-11-17',
+    cite: { text: 'the load matrix', href: evidence },
+  },
+  {
+    n: '2,000',
+    unit: 'refusals classified',
+    text: '2,000 of 2,000 capability refusals ended as a named CapabilityError and exit 7, in 17.7 s — none misclassified.',
+    how: 'the sustained-refusal scenario, 2026-11-07',
+    cite: { text: 'the load matrix', href: evidence },
+  },
+  {
+    n: '27.8 ns',
+    unit: 'an op call',
+    text: 'one million rt.now() calls in 44.1 ms of wall time; the Rust-to-V8 boundary costs about 22 ns of that.',
+    how: 'the op-boundary scenario, same build and commit',
+    cite: { text: 'the load matrix', href: evidence },
+  },
+  {
+    n: '9.3 ms',
+    unit: 'cold start, p50',
+    text: 'spawn to done across 1,000 cold starts (p95 10.5 ms, no failures) — V8 included, on one thread.',
+    how: 'the cold-start scenario, same build and commit',
+    cite: { text: 'the load matrix', href: evidence },
+  },
+]
+const contract = [
+  ['0', 'ok'],
+  ['2', 'usage'],
+  ['3', 'load'],
+  ['4', 'syntax'],
+  ['5', 'exception'],
+  ['6', 'terminated'],
+  ['7', 'capability'],
+  ['8', 'host'],
+]
+---
+
+<section class="section" id="proof">
+  <div class={`container ${styles.inner}`}>
+    <SectionHeading badge="THE PROOF" width={760}>
+      Measured, <span class="soft">not claimed</span>
+    </SectionHeading>
+    <p class={`t-body ${styles.lede}`}>
+      v1.0.0 shipped 2026-11-19 (<a class="inline-link" href={CHANGELOG_URL}>the changelog</a>). Its evidence is
+      committed next to the code: each run below names its scenario, machine and commit.
+    </p>
+
+    <ul class={styles.grid} data-proof>
+      {
+        stats.map((s, i) => (
+          <li class={styles.card} style={`--i: ${i}`}>
+            <p class={styles.number}>{s.n}</p>
+            <p class={`t-label ${styles.unit}`}>{s.unit}</p>
+            <p class={styles.text}>{s.text}</p>
+            <p class={styles.how}>
+              Measured by {s.how} — <a class="inline-link" href={s.cite.href}>{s.cite.text}</a>
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class={styles.contract}>
+      <p class={`t-label ${styles.contractTitle}`}>Every way a run ends has a class and a code</p>
+      <ul class={styles.codes}>
+        {contract.map(([code, name]) => (
+          <li class={styles.code}>
+            <span class={styles.codeN}>{code}</span>
+            <span class={styles.codeName}>{name}</span>
+          </li>
+        ))}
+      </ul>
+      <p class={styles.how}>
+        The full contract, with each failure demoed live —{' '}
+        <a class="inline-link" href={`${DOCS_URL}/reference/cli/`}>the CLI reference</a>
+      </p>
+    </div>
+
+    <p class={styles.note}>
+      Development observations on one Apple M2 Pro workstation, not production-capacity claims. Load runs keep
+      their misses instead of re-running to a nicer number.
+    </p>
+  </div>
+</section>
+
+<script>
+  // Same once-only entrance as the cards above it.
+  const grid = document.querySelector<HTMLElement>('[data-proof]')!
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+    grid.dataset.reveal = 'pending'
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          grid.dataset.reveal = 'shown'
+          io.disconnect()
+        }
+      },
+      { threshold: 0.15 },
+    )
+    io.observe(grid)
+  }
+</script>

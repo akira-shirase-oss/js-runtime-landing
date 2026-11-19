@@ -1,0 +1,60 @@
+---
+import SectionHeading from './ui/SectionHeading.astro'
+import ArrowButton from './ui/ArrowButton.astro'
+import styles from './QuickStart.module.css'
+import { DOCS_URL } from '../data/site'
+
+// The commands are the docs' own (docs.jsrt.404human.dev/quick-start/) — no published binaries, v1.0.0 builds
+// from source with the pinned Rust toolchain.
+const build = `git clone https://github.com/akira-shirase-oss/js-runtime.git
+cd js-runtime
+rustup toolchain install || rustup show
+cargo build --release --locked -p jsrt
+export PATH="$PWD/target/release:$PATH"
+
+jsrt run hello.js`
+const buildOut = 'hello from jsrt 1.0.0 on v8'
+
+const manifest = `{
+  "net": ["app.example.com:443"]
+}`
+const denied = `jsrt run fetch.js
+jsrt: capability: CapabilityError: fetch denied: app.example.com:443
+  is not a declared net destination`
+---
+
+<section class="section" id="quick-start">
+  <div class={`container ${styles.inner}`}>
+    <SectionHeading badge="QUICK START" width={720}>
+      Built from source, <span class="soft">in minutes</span>
+    </SectionHeading>
+    <p class={`t-body ${styles.lede}`}>
+      There are no published binaries yet: v1.0.0 is built from source with the pinned toolchain
+      (Rust 1.99.1 through rustup; the first build downloads ~95 MB of prebuilt V8).
+    </p>
+
+    <div class={styles.panels}>
+      <div class={styles.panel}>
+        <p class={`t-label ${styles.panelTitle}`}>Build it, run a script</p>
+        <pre class={styles.code}><code>{build}</code></pre>
+        <pre class={`${styles.code} ${styles.out}`}><code>{buildOut}</code></pre>
+      </div>
+      <div class={styles.panel}>
+        <p class={`t-label ${styles.panelTitle}`}>Grant it, or be refused</p>
+        <pre class={styles.code}><code>{manifest}</code></pre>
+        <pre class={`${styles.code} ${styles.out}`}><code>{denied}</code></pre>
+      </div>
+    </div>
+
+    <p class={styles.note}>
+      <code class={styles.inline}>jsrt.manifest.json</code> beside the entry grants exactly one net destination;
+      without it the fetch is refused before the network is asked — and the refusal names only what the script
+      asked for. On macOS with Homebrew's cargo, first{' '}
+      <code class={styles.inline}>export PATH="$(brew --prefix rustup)/bin:$PATH"</code>.
+    </p>
+
+    <div class={styles.actions}>
+      <ArrowButton href={`${DOCS_URL}/quick-start/`}>Walk the full quick start</ArrowButton>
+    </div>
+  </div>
+</section>

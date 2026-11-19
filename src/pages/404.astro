@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import { DOCS_URL } from '../data/site'
+
+const title = 'Page not found | jsrt'
+const description = 'There is no page at this address. The home page and the docs are a click away.'
+---
+
+<Base title={title} description={description} noindex>
+  <div style="display: flex; flex-direction: column; align-items: center; overflow: clip;">
+    <Nav />
+    <main class="section" style="width: 100%; min-height: 50vh;">
+      <div class="container" style="display: flex; flex-direction: column; gap: 16px; padding-top: 40px;">
+        <p class="t-badge">404</p>
+        <h1 class="t-h2">There's no page here</h1>
+        <p class="t-body">
+          The address may be mistyped, or the page may have moved. Try the <a class="inline-link" href="/">home
+          page</a> or the <a class="inline-link" href={DOCS_URL}>docs</a>.
+        </p>
+      </div>
+    </main>
+    <Footer />
+  </div>
+</Base>
