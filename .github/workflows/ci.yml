@@ -45,3 +45,40 @@ jobs:
         env:
           LEAK_SCAN_NAMES: ${{ secrets.LEAK_SCAN_NAMES }}
         run: npm run check
+      - name: Static budget (HTML, CSS and image bytes, image markup)
+        run: node scripts/check-budget.mjs
+
+  browser:
+    name: "browser (real headers: no CSP violation, error or broken asset; the Lighthouse budget)"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # Playwright isn't a dependency of the site (nothing ships it); CI installs one pinned version.
+      - name: Playwright and Lighthouse, pinned, outside package.json
+        run: |
+          npm install --no-save --no-package-lock playwright@1.64.1 lighthouse@13.3.0
+          npx playwright install --with-deps chromium
+      - name: The known-bad policy must fail (script hashes removed)
+        run: |
+          # Exit 1 is the check failing as it must; 0 means it missed the broken policy, 2 that it couldn't run.
+          set +e
+          node scripts/check-csp-browser.mjs --mutate
+          code=$?
+          set -e
+          if [ "$code" -ne 1 ]; then echo "the mutated policy run exited $code, not 1"; exit 1; fi
+      - name: Every page in light and dark, and the scripted interactions
+        run: npm run check:browser
+      # The performance budget (scripts/budget-config.mjs): mobile, median of five runs, LCP ≤ 2.0 s,
+      # CLS 0, TBT ≤ 150 ms, own script ≤ 50 ms, Performance ≥ 95, SEO 100, Accessibility 100. CI runner
+      # numbers are lab observations; a regression past a threshold fails the build.
+      - name: Lighthouse budget on every page type
+        run: node scripts/lighthouse-budget.mjs --runs 5

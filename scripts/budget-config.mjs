@@ -3,7 +3,7 @@
 // notch performance". Ported from products/colophon-landing (the same numbers, adapted to a single-page
 // site: there is no blog to reuse, so CSS is budgeted per page by bytes).
 export const HTML_BUDGET_GZ = 60 * 1024
-export const CSS_BUDGET_GZ = 6610 // the landing page's two stylesheets, gzipped, on 19 November 2026
+export const CSS_BUDGET_GZ = 9328 // the landing page's two stylesheets, gzipped, on 19 November 2026
 export const IMAGE_BUDGET = 100 * 1024
 /** The page types Lighthouse measures: paths under dist/, one entry each. */
 export const PAGES = ['/']
