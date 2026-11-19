@@ -308,7 +308,7 @@ await visit('/', desktop, async (page, report) => {
   await context.close()
 }
 
-// The fonts actually drawn (Chromium's own record of the platform font per node): titles in Science Gothic,
+// The fonts actually drawn (Chromium's own record of the platform font per node): titles in Jost,
 // text in Plus Jakarta Sans, both as the downloaded web fonts, never their local fallbacks.
 await visit('/', desktop, async (page, report) => {
   interactions++
@@ -317,8 +317,8 @@ await visit('/', desktop, async (page, report) => {
   await cdp.send('CSS.enable')
   const { root } = await cdp.send('DOM.getDocument', { depth: -1 })
   const want = [
-    ['main h1', 'Science Gothic'],
-    ['main h2', 'Science Gothic'],
+    ['main h1', 'Jost'],
+    ['main h2', 'Jost'],
     ['main p', 'Plus Jakarta Sans'],
     ['nav a', 'Plus Jakarta Sans'],
     ['footer > p', 'Plus Jakarta Sans'],

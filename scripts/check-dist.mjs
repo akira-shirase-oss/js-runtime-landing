@@ -17,7 +17,7 @@
 //          indexable pages.
 // jsonld   every JSON-LD block is valid JSON with no "<" in it, so its data can't end the script
 //          (`</script>`) or swallow the rest of the page (`<!--`).
-// fonts    the site uses exactly three webfonts: every @font-face is Science Gothic, Plus Jakarta Sans or JetBrains Mono (or their local,
+// fonts    the site uses exactly three webfonts: every @font-face is Jost, Plus Jakarta Sans or JetBrains Mono (or their local,
 //          metric-matched fallbacks), every font file built is one of their two woff2 files, and nothing
 //          links to or preloads any other font.
 // light    the page stays still unless someone acts: no backdrop-filter (a blurred sticky layer re-blurs on
@@ -479,15 +479,15 @@ function checkJsonLd() {
 // fonts: two families, nothing else downloaded
 
 const FONT_FAMILIES = new Set([
-  'Science Gothic',
+  'Jost',
   'Plus Jakarta Sans',
   'JetBrains Mono',
-  'Science Gothic Fallback',
+  'Jost Fallback',
   'Plus Jakarta Sans Fallback',
   'JetBrains Mono Fallback',
 ])
 const FONT_FILES = new Set([
-  'fonts/science-gothic-latin-var.woff2',
+  'fonts/jost-latin-var.woff2',
   'fonts/plus-jakarta-sans-latin-var.woff2',
   'fonts/jetbrains-mono-latin-var.woff2',
 ])
@@ -498,7 +498,7 @@ function checkFonts() {
     for (const face of sheet.text.match(/@font-face\s*{[^}]*}/g) ?? []) {
       faces++
       const family = face.match(/font-family:\s*["']?([^;"'}]+)["']?/)?.[1]?.trim()
-      if (!FONT_FAMILIES.has(family)) fail('fonts', `${sheet.file}: @font-face for "${family}"; the site uses Science Gothic, Plus Jakarta Sans and JetBrains Mono only`)
+      if (!FONT_FAMILIES.has(family)) fail('fonts', `${sheet.file}: @font-face for "${family}"; the site uses Jost, Plus Jakarta Sans and JetBrains Mono only`)
       for (const m of face.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)) {
         const file = m[1].replace(/^\//, '')
         if (!FONT_FILES.has(file)) fail('fonts', `${sheet.file}: @font-face loads ${m[1]}, which is not one of the two font files`)
@@ -565,5 +565,5 @@ console.log(`  leaks    ok: no private files, paths, ${namesScanned} private nam
 console.log(`  links    ok: every target="_blank" link has noopener or noreferrer; ${linksChecked} same-origin links resolve`)
 console.log(`  seo      ok: titles, descriptions, one h1, canonicals, share cards, alt; ${seo.indexable} pages in the sitemap`)
 console.log(`  jsonld   ok: ${jsonLdBlocks} JSON-LD blocks, all valid JSON with no "<"`)
-console.log(`  fonts    ok: ${fontFaces} @font-face rules, all Science Gothic, Plus Jakarta Sans or JetBrains Mono`)
+console.log(`  fonts    ok: ${fontFaces} @font-face rules, all Jost, Plus Jakarta Sans or JetBrains Mono`)
 console.log(`  light    ok: ${lightChecked} stylesheets and scripts, nothing painting or listening forever`)

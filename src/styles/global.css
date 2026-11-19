@@ -1,14 +1,14 @@
 @import './tokens.css';
 
 /* ---------- Fonts: jsrt's three families, self-hosted (design/README.md) ----------
-   Science Gothic names things: the hero, each page's title, the section titles, the wordmark. Plus Jakarta Sans
+   Jost names things: the hero, each page's title, the section titles, the wordmark. Plus Jakarta Sans
    sets everything inside them; JetBrains Mono sets commands and code. All three are OFL, Latin-subset variable
    files (licences beside them). Each has a local fallback sized to its metrics at the setting the page uses, so the
    swap moves nothing (CLS 0). */
 @font-face {
-  font-family: 'Science Gothic';
-  src: url('/fonts/science-gothic-latin-var.woff2') format('woff2');
-  font-weight: 400 800;
+  font-family: 'Jost';
+  src: url('/fonts/jost-latin-var.woff2') format('woff2');
+  font-weight: 400 700;
   font-style: normal;
   font-display: swap;
 }
@@ -26,13 +26,13 @@
   font-style: normal;
   font-display: swap;
 }
-/* Metrics measured at weight 600 (titles), 400 (text) and 400 (code) against Arial and Courier New. */
+/* Metrics measured at weight 500 (titles), 400 (text) and 400 (code) against Arial and Courier New. */
 @font-face {
-  font-family: 'Science Gothic Fallback';
+  font-family: 'Jost Fallback';
   src: local('Arial'), local('Helvetica'), local('Liberation Sans');
-  size-adjust: 133.71%;
-  ascent-override: 81.37%;
-  descent-override: 29.02%;
+  size-adjust: 99.83%;
+  ascent-override: 107.19%;
+  descent-override: 37.56%;
   line-gap-override: 0%;
 }
 @font-face {
@@ -54,7 +54,7 @@
 
 /* ---------- Tokens (colours live in tokens.css) ---------- */
 :root {
-  --font-title: 'Science Gothic', 'Science Gothic Fallback', sans-serif;
+  --font-title: 'Jost', 'Jost Fallback', sans-serif;
   --font-text: 'Plus Jakarta Sans', 'Plus Jakarta Sans Fallback', sans-serif;
   --font-code: 'JetBrains Mono', 'JetBrains Mono Fallback', ui-monospace, monospace;
   /* Shape, from the theme: --radius and its steps (sm, md, lg, xl). */
@@ -151,11 +151,11 @@ p {
   font-weight: inherit;
   font-size: inherit;
 }
-/* Science Gothic: a real variable weight, so titles use 600 and never a synthesised bold. */
+/* Jost: a real variable weight, so titles use 500 and never a synthesised bold. */
 .t-hero,
 .t-h2 {
   font-synthesis: none;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.025em;
 }
 /* Balanced line lengths on headings and short text */
 h1,
@@ -173,16 +173,16 @@ figcaption {
 /* ---------- Type presets ---------- */
 .t-hero {
   font-family: var(--font-title);
-  font-size: 60px;
-  line-height: 1.08;
-  font-weight: 600;
+  font-size: 76px;
+  line-height: 1.02;
+  font-weight: 500;
   color: var(--c-ink);
 }
 .t-h2 {
   font-family: var(--font-title);
-  font-size: 42px;
-  line-height: 1.1;
-  font-weight: 600;
+  font-size: 56px;
+  line-height: 1.05;
+  font-weight: 500;
   color: var(--c-ink);
 }
 /* the soft second phrase in many headings: the same face, set back in muted grey */
@@ -258,12 +258,12 @@ figcaption {
 
 @media (max-width: 1199px) {
   .t-h2 {
-    font-size: 36px;
+    font-size: 46px;
   }
 }
 @media (max-width: 809px) {
   .t-h2 {
-    font-size: 30px;
+    font-size: 38px;
   }
 }
 
